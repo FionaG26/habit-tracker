@@ -46,7 +46,8 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 # ✅ Get current logged-in user
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
-    return current_user
+    return {"username": current_user.username, "role": current_user.role}
+
 
 # ✅ Get all users (Admin only)
 @router.get("/users", response_model=List[UserResponse])
