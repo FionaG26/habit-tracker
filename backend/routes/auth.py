@@ -5,6 +5,7 @@ from schemas import UserCreate, UserLogin, TokenResponse
 from database import get_db
 from passlib.context import CryptContext
 from .auth_utils import create_access_token, verify_password, get_current_user
+from datetime import timedelta
 
 router = APIRouter()
 
