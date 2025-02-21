@@ -7,6 +7,7 @@ from models import User
 from database import get_db
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
+from .auth_utils import get_current_user 
 
 SECRET_KEY = "your_secret_key"  # Change this
 ALGORITHM = "HS256"
@@ -45,3 +46,12 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
     user.role = role  # Attach role to user object
     return user
+
+def require_admin(current_user: User = Depends(get_current_user)):
+    """Ensures the user has an admin role."""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Admin access required"
+        )
+    return current_user
