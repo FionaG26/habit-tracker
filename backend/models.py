@@ -9,7 +9,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-
+    role = Column(String, default="user") 
+    
     habits = relationship("Habit", back_populates="user", cascade="all, delete-orphan")
 
 class Habit(Base):
@@ -23,4 +24,3 @@ class Habit(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     user = relationship("User", back_populates="habits")
-
