@@ -5,6 +5,7 @@ from typing import Optional
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50, description="Username must be between 3 and 50 characters.")
     password: str = Field(..., min_length=8, description="Password must be at least 8 characters long.")
+    role: Optional[str] = "user"
 
 class UserLogin(BaseModel):  
     username: str
@@ -14,6 +15,7 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id: int
     username: str
+    role: str
 
     class Config:
         from_attributes = True
