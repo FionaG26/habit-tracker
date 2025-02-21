@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth, habits
 from database import Base, engine
+from routes import users
 
 # Initialize FastAPI app
 app = FastAPI(title="Habit Tracker API", version="1.0")
