@@ -5,7 +5,7 @@ from models import User
 from schemas import UserCreate, UserLogin, TokenResponse, UserResponse
 from database import get_db
 from passlib.context import CryptContext
-from .auth_utils import create_access_token, verify_password, get_current_user
+from .auth_utils import create_access_token, verify_password, get_current_user, require_admin
 from datetime import timedelta
 
 router = APIRouter()
