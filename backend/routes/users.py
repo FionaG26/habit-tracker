@@ -69,3 +69,8 @@ def delete_user(user_id: int, db: Session = Depends(get_db), current_user: User 
     db.delete(user)
     db.commit()
     return {"message": "User deleted successfully"}
+
+# ✅ Admin-only test route
+@router.get("/admin-only")
+def admin_route(admin: User = Depends(require_admin)):
+    return {"message": "Welcome, Admin!"}
