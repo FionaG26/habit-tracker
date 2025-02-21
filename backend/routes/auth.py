@@ -10,19 +10,25 @@ router = APIRouter()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# ✅ Register a new user
-@router.post("/register")
+# ✅ Register a new user and return a token
+@router.post("/register", response_model=TokenResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
+    # Check if user already exists
     existing_user = db.query(User).filter(User.username == user.username).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already taken")
 
+    # Hash password and create user
     hashed_password = pwd_context.hash(user.password)
     db_user = User(username=user.username, password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return {"message": "User registered successfully"}
+
+    # ✅ Generate access token after registration
+    access_token = create_access_token(data={"sub": db_user.username}, expires_delta=timedelta(minutes=60))
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 # ✅ Login user and return JWT token
 @router.post("/login", response_model=TokenResponse)
