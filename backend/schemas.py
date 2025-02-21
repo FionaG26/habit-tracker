@@ -24,6 +24,9 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str
 
+class TokenData(BaseModel):
+    sub: Optional[str] = None
+    
 # Habit Schema
 class HabitBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=100, description="Title must be between 3 and 100 characters.")
