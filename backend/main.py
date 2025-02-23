@@ -4,6 +4,7 @@ from routes import auth, habits
 from database import Base, engine
 from routes import users
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 # Initialize FastAPI app
 app = FastAPI(title="Habit Tracker API", version="1.0")
