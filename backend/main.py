@@ -24,6 +24,9 @@ app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(habits.router, prefix="/habits", tags=["Habits"])
 app.include_router(users.router, prefix="/api", tags=["Users"])
 
+# Serve Vue frontend
+app.mount("/frontend", StaticFiles(directory="frontend", html=True), name="frontend")
+
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to the Habit Tracker API!"}
+async def serve_vue():
+    return FileResponse("frontend/index.html")
