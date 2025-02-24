@@ -106,5 +106,10 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
+  width: 100%; /* Ensures it takes full width of the parent container */
+  max-width: 500px; /* Adjust as needed */
+  margin: auto; /* Centers the quote */
+  overflow: hidden; /* Prevents unwanted text wrapping issues */
+  white-space: nowrap; /* Prevents text from wrapping */
+  text-overflow: ellipsis; /* Adds "..." when text overflows */
 }
-</style>
