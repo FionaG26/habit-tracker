@@ -4,7 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from routes import auth, habits, users
 from database import Base, engine
+from dotenv import load_dotenv
 import os
+
+# Load environment variables
+load_dotenv()
 
 # Initialize FastAPI app without automatic redirects
 app = FastAPI(title="Habit Tracker API", version="1.0", redirect_slashes=False)
