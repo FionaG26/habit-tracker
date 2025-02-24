@@ -1,7 +1,7 @@
 <template>
   <div class="habit-form">
-    <h2>Add New Habit</h2>
-    <form @submit.prevent="addHabit">
+    <h2 class="text-2xl font-semibold">Add New Habit</h2>
+    <form @submit.prevent="addHabit" class="mt-4">
       <div class="form-group">
         <label for="title">Habit Title</label>
         <input v-model="title" type="text" class="form-control" id="title" required />
@@ -14,7 +14,7 @@
         <label for="reminder">Reminder (HH:MM)</label>
         <input v-model="reminder" type="time" class="form-control" id="reminder" />
       </div>
-      <button type="submit" class="btn btn-primary">Add Habit</button>
+      <button type="submit" class="btn-custom">Add Habit</button>
     </form>
   </div>
 </template>
@@ -46,10 +46,14 @@ export default {
 
 <style scoped>
 .habit-form {
-  background: #fff;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+
+/* Custom Button */
+.btn-custom {
+  @apply bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg transition-all;
 }
 </style>
-
