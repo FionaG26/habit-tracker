@@ -1,23 +1,37 @@
 <template>
-  <div class="container">
-    <h1>Habit Tracker</h1>
+  <div>
+    <!-- Show Auth component if user is NOT logged in -->
+    <Auth v-if="!isAuthenticated" />  
 
-    <!-- Quote Section -->
-    <p id="quote" class="quote italic text-lg text-gray-200 mb-6">{{ quote }}</p>
+    <!-- Show the Habit Tracker only if logged in -->
+    <div v-else>
+      <div class="container">
+        <h1>Habit Tracker</h1>
 
-    <Auth />
-    <HabitForm />
-    <HabitList />
-    <ProgressBar />
+        <!-- Quote Section -->
+        <p id="quote" class="quote italic text-lg text-gray-200 mb-6">{{ quote }}</p>
 
-    <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">
-      Toggle Dark Mode
-    </button>
+        <HabitForm />
+        <HabitList />
+        <ProgressBar />
 
-    <!-- Footer -->
-    <footer class="mt-6 text-center text-gray-300 text-sm">
-      Designed with ❤️ by <a href="https://github.com/FionaG26/habit-tracker" class="text-blue-400 hover:text-blue-600 transition">Fiona Githaiga</a>
-    </footer>
+        <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">
+          Toggle Dark Mode
+        </button>
+
+        <button @click="logout" class="mt-4 p-2 rounded-lg bg-red-500 text-white">
+          Logout
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <footer class="mt-6 text-center text-gray-300 text-sm">
+        Designed with ❤️ by 
+        <a href="https://github.com/FionaG26/habit-tracker" class="text-blue-400 hover:text-blue-600 transition">
+          Fiona Githaiga
+        </a>
+      </footer>
+    </div>
   </div>
 </template>
 
