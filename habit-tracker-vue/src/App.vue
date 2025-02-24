@@ -32,6 +32,7 @@ const Auth = defineAsyncComponent(() => import('./components/Auth.vue'));
 
 export default {
   components: {
+    Auth,
     HabitForm,
     HabitList,
     ProgressBar,
