@@ -4,10 +4,59 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue</title>
+    <title>Habit Tracker</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
+  <body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex flex-col items-center justify-center text-white text-center overflow-hidden">
+    
+    <!-- Background Animation -->
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <canvas id="bgCanvas"></canvas>
+    </div>
+
+    <!-- Vue App Mounting Point -->
     <div id="app"></div>
+
+    <!-- Main Vue App -->
     <script type="module" src="/src/main.js"></script>
+
+    <!-- GSAP for Smooth Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Confetti Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
+
+    <script>
+        // Fun floating bubbles background animation
+        const canvas = document.getElementById("bgCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const bubbles = Array.from({ length: 50 }).map(() => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 6 + 2,
+            speed: Math.random() * 2 + 0.5,
+            color: `rgba(255, 255, 255, ${Math.random()})`
+        }));
+
+        function animateBubbles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            bubbles.forEach(bubble => {
+                ctx.beginPath();
+                ctx.arc(bubble.x, bubble.y, bubble.r, 0, Math.PI * 2);
+                ctx.fillStyle = bubble.color;
+                ctx.fill();
+                bubble.y -= bubble.speed;
+                if (bubble.y < -10) bubble.y = canvas.height + 10;
+            });
+            requestAnimationFrame(animateBubbles);
+        }
+        animateBubbles();
+    </script>
   </body>
 </html>
+
