@@ -21,10 +21,9 @@
 
         <button type="submit" class="btn-custom">{{ isLogin ? 'Login' : 'Register' }}</button>
 
-        <div class="social-login">
-          <p>Or continue with:</p>
-          <button class="btn-social google" @click="socialLogin('google')">🔵 Google</button>
-          <button class="btn-social github" @click="socialLogin('github')">⚫ GitHub</button>
+        <div class="oauth-buttons">
+          <button @click="oauthLogin('google')" class="btn-google">Login with Google</button>
+          <button @click="oauthLogin('github')" class="btn-github">Login with GitHub</button>
         </div>
       </form>
 
@@ -55,7 +54,7 @@ export default {
 
     const handleSubmit = async () => {
       try {
-        const endpoint = isLogin.value ? '/login' : '/register';
+        const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
         const response = await API.post(endpoint, form.value);
         localStorage.setItem('token', response.data.access_token);
         alert(`${isLogin.value ? 'Logged in' : 'Registered'} successfully!`);
@@ -64,11 +63,11 @@ export default {
       }
     };
 
-    const socialLogin = async (provider) => {
-      window.location.href = `http://127.0.0.1:8000/auth/${provider}`;
+    const oauthLogin = (provider) => {
+      window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
     };
 
-    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, socialLogin };
+    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin };
   }
 };
 </script>
@@ -129,27 +128,29 @@ export default {
   background: #218838;
 }
 
-.social-login {
+.oauth-buttons {
   margin-top: 10px;
 }
 
-.btn-social {
-  display: inline-block;
-  padding: 8px;
+.btn-google {
+  background: #db4437;
+  color: white;
+  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin: 5px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
-.btn-social.google {
-  background: #db4437;
-  color: white;
-}
-
-.btn-social.github {
+.btn-github {
   background: #24292e;
   color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
 }
 
 .toggle-text {
