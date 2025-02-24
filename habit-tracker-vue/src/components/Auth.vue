@@ -1,7 +1,7 @@
 <template>
   <div class="auth-container">
     <div class="auth-card">
-      <h2 class="text-2xl font-semibold">{{ isLogin ? 'Login' : 'Register' }}</h2>
+      <h2 class="title">{{ isLogin ? 'Login' : 'Register' }}</h2>
 
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
@@ -19,7 +19,9 @@
           </div>
         </div>
 
-        <button type="submit" class="btn-custom">{{ isLogin ? 'Login' : 'Register' }}</button>
+        <button type="submit" class="btn-custom">
+          {{ isLogin ? 'Login' : 'Register' }}
+        </button>
 
         <div class="oauth-buttons">
           <button @click="oauthLogin('google')" class="btn-google">Login with Google</button>
@@ -53,19 +55,19 @@ export default {
     };
 
     const handleSubmit = async () => {
-  try {
-    const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
-    const response = await API.post(endpoint, form.value);
+      try {
+        const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
+        const response = await API.post(endpoint, form.value);
 
-    // Save token in localStorage
-    localStorage.setItem('token', response.data.access_token);
+        // Save token in localStorage
+        localStorage.setItem('token', response.data.access_token);
 
-    alert(`${isLogin.value ? 'Logged in' : 'Registered'} successfully!`);
-    window.location.href = "/dashboard"; // Redirect to dashboard
-  } catch (error) {
-    alert(error.response.data.detail || 'Something went wrong!');
-  }
-};
+        alert(`${isLogin.value ? 'Logged in' : 'Registered'} successfully!`);
+        window.location.href = "/dashboard"; // Redirect to dashboard
+      } catch (error) {
+        alert(error.response.data.detail || 'Something went wrong!');
+      }
+    };
 
     const oauthLogin = (provider) => {
       window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
@@ -77,89 +79,138 @@ export default {
 </script>
 
 <style scoped>
+/* Center container */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #f4f4f4;
+  background: linear-gradient(to bottom, #4f46e5, #3b82f6);
+  padding: 20px;
 }
 
+/* Card container */
 .auth-card {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: 350px;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+  width: 380px;
   text-align: center;
+  transition: transform 0.3s ease-in-out;
 }
 
+/* Card hover effect */
+.auth-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Title */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Form group */
 .form-group {
   margin-bottom: 15px;
   text-align: left;
 }
 
+/* Form input fields */
 .form-control {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border 0.3s;
 }
 
+.form-control:focus {
+  border-color: #4f46e5;
+  outline: none;
+}
+
+/* Password wrapper */
 .password-wrapper {
   display: flex;
   align-items: center;
   position: relative;
 }
 
+/* Password toggle icon */
 .toggle-password {
   position: absolute;
-  right: 10px;
+  right: 12px;
   cursor: pointer;
+  font-size: 18px;
+  color: #4f46e5;
 }
 
+/* Custom submit button */
 .btn-custom {
-  background: #28a745;
+  background: #4f46e5;
   color: white;
-  padding: 10px;
+  padding: 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
   width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
 .btn-custom:hover {
-  background: #218838;
+  background: #3b82f6;
 }
 
+/* OAuth Buttons */
 .oauth-buttons {
-  margin-top: 10px;
+  margin-top: 15px;
+}
+
+.btn-google,
+.btn-github {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .btn-google {
   background: #db4437;
   color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
   margin-bottom: 10px;
 }
 
 .btn-github {
   background: #24292e;
   color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
 }
 
+.btn-google:hover,
+.btn-github:hover {
+  opacity: 0.85;
+}
+
+/* Toggle between login & register */
 .toggle-text {
-  margin-top: 10px;
-  color: blue;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #4f46e5;
   cursor: pointer;
+  transition: color 0.3s;
+}
+
+.toggle-text:hover {
+  color: #3b82f6;
 }
 </style>
