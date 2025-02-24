@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.sessions import SessionMiddleware  # Import SessionMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer
