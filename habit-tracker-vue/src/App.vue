@@ -5,9 +5,10 @@
     <!-- Quote Section -->
     <p id="quote" class="quote italic text-lg text-gray-200 mb-6">{{ quote }}</p>
 
-    <ProgressBar />
+    <Auth />
     <HabitForm />
     <HabitList />
+    <ProgressBar />
 
     <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">
       Toggle Dark Mode
