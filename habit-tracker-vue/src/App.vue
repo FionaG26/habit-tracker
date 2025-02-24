@@ -1,14 +1,14 @@
-<template> 
+<template>
   <div class="container">
     <h1>Habit Tracker</h1>
-    
+
     <!-- Quote Section -->
-    <p id="quote" class="italic text-lg text-gray-200 mb-6">{{ quote }}</p>
-    
+    <p id="quote" class="quote italic text-lg text-gray-200 mb-6">{{ quote }}</p>
+
     <ProgressBar />
     <HabitForm />
     <HabitList />
-    
+
     <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">
       Toggle Dark Mode
     </button>
@@ -40,13 +40,13 @@ export default {
       "Consistency is the key to success!",
       "Great things take time. Stay consistent!"
     ];
-    
+
     const toggleDarkMode = () => {
       darkMode.value = !darkMode.value;
       localStorage.setItem('darkMode', darkMode.value);
       document.documentElement.classList.toggle('dark', darkMode.value);
     };
-    
+
     watch(darkMode, (newVal) => {
       document.documentElement.classList.toggle('dark', newVal);
     });
@@ -71,7 +71,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import './style.css';
 
@@ -113,3 +113,4 @@ body {
   white-space: nowrap; /* Prevents text from wrapping */
   text-overflow: ellipsis; /* Adds "..." when text overflows */
 }
+</style>
