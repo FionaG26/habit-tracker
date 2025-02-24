@@ -1,18 +1,22 @@
 <template> 
   <div class="container">
     <h1>Habit Tracker</h1>
+    
     <!-- Quote Section -->
     <p id="quote" class="italic text-lg text-gray-200 mb-6">{{ quote }}</p>
     
     <ProgressBar />
     <HabitForm />
     <HabitList />
-    <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">Toggle Dark Mode</button>
+    
+    <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">
+      Toggle Dark Mode
+    </button>
   </div>
 </template>
 
 <script>
-import { defineAsyncComponent, watch, ref } from 'vue';
+import { defineAsyncComponent, watch, ref, onMounted } from 'vue';
 import gsap from 'gsap';
 
 const HabitForm = defineAsyncComponent(() => import('./components/HabitForm.vue'));
@@ -40,21 +44,29 @@ export default {
     const toggleDarkMode = () => {
       darkMode.value = !darkMode.value;
       localStorage.setItem('darkMode', darkMode.value);
-      document.body.classList.toggle('dark', darkMode.value);
+      document.documentElement.classList.toggle('dark', darkMode.value);
     };
     
-    watch(() => darkMode.value, (newVal) => {
-      document.body.classList.toggle('dark', newVal);
+    watch(darkMode, (newVal) => {
+      document.documentElement.classList.toggle('dark', newVal);
     });
-    
-    setInterval(() => {
-      quote.value = quotes[Math.floor(Math.random() * quotes.length)];
-    }, 3000);
-    
+
+    onMounted(() => {
+      // Ensure dark mode is applied on page load
+      if (darkMode.value) {
+        document.documentElement.classList.add('dark');
+      }
+
+      // Change quote every 3 seconds
+      setInterval(() => {
+        quote.value = quotes[Math.floor(Math.random() * quotes.length)];
+      }, 3000);
+
+      // Simple animation for the header
+      gsap.to("h1", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 });
+    });
+
     return { toggleDarkMode, quote };
-  },
-  mounted() {
-    gsap.to("#start-btn", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 });
   }
 };
 </script>
@@ -81,8 +93,18 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.dark {
-  background: #1a202c;
+/* Dark mode styles */
+.dark .container {
+  background: rgba(0, 0, 0, 0.8);
   color: white;
+}
+
+/* Prevent quote section resizing */
+#quote {
+  min-height: 40px; /* Ensures it doesn’t shrink or expand */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 </style>
