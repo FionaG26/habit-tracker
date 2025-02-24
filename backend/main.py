@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.sessions import SessionMiddleware  # Import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer
@@ -14,6 +15,12 @@ load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI(title="Habit Tracker API", version="1.0", redirect_slashes=False)
+
+# 🔹 Add SessionMiddleware
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SESSION_SECRET", "your_strong_secret_key")  # Use a secure key
+)
 
 # OAuth2 for Token Authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -74,7 +81,6 @@ else:
 
 # Serve index.html directly (Fixes Vue routing issues)
 @app.get("/", include_in_schema=False)
-@app.get("")
 async def serve_vue():
     index_path = os.path.join(frontend_path, "index.html")
     if os.path.exists(index_path):
