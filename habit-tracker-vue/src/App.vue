@@ -1,29 +1,23 @@
-<template>
-  <div class="app-container">
-    <!-- Title -->
-    <h1 class="text-4xl font-bold mb-4 animate-bounce">🚀 Welcome to Habit Tracker!</h1>
-    
+<template> 
+  <div class="container">
+    <h1>Habit Tracker</h1>
     <!-- Quote Section -->
     <p id="quote" class="italic text-lg text-gray-200 mb-6">{{ quote }}</p>
-
-    <!-- Get Started Button -->
-    <button @click="startApp" class="btn-custom">Get Started</button>
-
-    <!-- Main Content -->
-    <div class="glass-card mt-6">
-      <ProgressBar />
-      <HabitForm />
-      <HabitList />
-    </div>
+    
+    <ProgressBar />
+    <HabitForm />
+    <HabitList />
+    <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">Toggle Dark Mode</button>
   </div>
 </template>
 
 <script>
+import { defineAsyncComponent, watch, ref } from 'vue';
 import gsap from 'gsap';
-import confetti from 'canvas-confetti';
-import HabitForm from './components/HabitForm.vue';
-import HabitList from './components/HabitList.vue';
-import ProgressBar from './components/ProgressBar.vue';
+
+const HabitForm = defineAsyncComponent(() => import('./components/HabitForm.vue'));
+const HabitList = defineAsyncComponent(() => import('./components/HabitList.vue'));
+const ProgressBar = defineAsyncComponent(() => import('./components/ProgressBar.vue'));
 
 export default {
   components: {
@@ -31,71 +25,64 @@ export default {
     HabitList,
     ProgressBar,
   },
-  data() {
-    return {
-      quotes: [
-        "Success is the sum of small efforts, repeated day in and day out. – Robert Collier",
-        "Small changes make a big difference!",
-        "Keep going, you're doing great! 💪",
-        "Your habits shape your future. Make them count!",
-        "Consistency is the key to success!",
-        "Great things take time. Stay consistent!"
-      ],
-      quote: "Success is the sum of small efforts, repeated day in and day out. – Robert Collier"
+  setup() {
+    const darkMode = ref(localStorage.getItem('darkMode') === 'true');
+    const quote = ref("Success is the sum of small efforts, repeated day in and day out. – Robert Collier");
+    const quotes = [
+      "Success is the sum of small efforts, repeated day in and day out. – Robert Collier",
+      "Small changes make a big difference!",
+      "Keep going, you're doing great! 💪",
+      "Your habits shape your future. Make them count!",
+      "Consistency is the key to success!",
+      "Great things take time. Stay consistent!"
+    ];
+    
+    const toggleDarkMode = () => {
+      darkMode.value = !darkMode.value;
+      localStorage.setItem('darkMode', darkMode.value);
+      document.body.classList.toggle('dark', darkMode.value);
     };
+    
+    watch(() => darkMode.value, (newVal) => {
+      document.body.classList.toggle('dark', newVal);
+    });
+    
+    setInterval(() => {
+      quote.value = quotes[Math.floor(Math.random() * quotes.length)];
+    }, 3000);
+    
+    return { toggleDarkMode, quote };
   },
   mounted() {
-    // Change quote every 3 seconds
-    setInterval(() => {
-      this.quote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
-    }, 3000);
-  },
-  methods: {
-    startApp() {
-      // Scale animation
-      gsap.to(".glass-card", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 });
-
-      // Confetti explosion
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-
-      // Play success sound
-      new Audio("https://www.myinstants.com/media/sounds/success-fanfare.mp3").play();
-    }
+    gsap.to("#start-btn", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 });
   }
 };
 </script>
 
 <style>
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import './style.css';
 
-/* Background */
 body {
-  @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white min-h-screen flex items-center justify-center;
+  background: linear-gradient(to right, #4f46e5, #9333ea);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: background 0.3s ease;
 }
 
-/* Main Container */
-.app-container {
-  text-align: center;
-  width: 100%;
-  max-width: 800px;
-}
-
-/* Glassmorphism Card */
-.glass-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+.container {
+  background: rgba(255, 255, 255, 0.1);
   padding: 20px;
   border-radius: 15px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  width: 100%;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Custom Button */
-.btn-custom {
-  @apply bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg transition-all;
+.dark {
+  background: #1a202c;
+  color: white;
 }
 </style>
