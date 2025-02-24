@@ -61,36 +61,49 @@ export default {
 
 <style scoped>
 .habit-form {
-  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  padding: 30px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 15px;
   backdrop-filter: blur(10px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  margin: 20px auto;
 }
 
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
 
 .form-control {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
+  font-size: 1rem;
 }
 
 .form-control::placeholder {
   color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
 }
 
 /* Custom Button */
 .btn-custom {
-  @apply bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-all;
+  width: 100%;
+  background: #38a169;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 10px;
+  transition: all 0.3s;
 }
 
 .btn-custom:hover {
+  background: #2f855a;
   transform: scale(1.05);
 }
 </style>
