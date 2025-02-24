@@ -1,14 +1,11 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from fastapi.security import OAuth2PasswordBearer
-from routes import auth, habits, users
-from database import Base, engine
-from dotenv import load_dotenv
-import jwt  # PyJWT for token decoding
+from authlib.integrations.starlette_client import OAuth
 import os
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -16,41 +13,35 @@ load_dotenv()
 # Initialize FastAPI app
 app = FastAPI(title="Habit Tracker API", version="1.0", redirect_slashes=False)
 
-# 🔹 Add SessionMiddleware
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=os.getenv("SESSION_SECRET", "your_strong_secret_key")  # Use a secure key
+# Add SessionMiddleware
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"))
+
+# OAuth setup
+oauth = OAuth()
+
+# ✅ Register GitHub OAuth
+oauth.register(
+    name="github",
+    client_id=os.getenv("GITHUB_CLIENT_ID"),
+    client_secret=os.getenv("GITHUB_CLIENT_SECRET"),
+    authorize_url="https://github.com/login/oauth/authorize",
+    access_token_url="https://github.com/login/oauth/access_token",
+    userinfo_endpoint="https://api.github.com/user",
+    client_kwargs={"scope": "user:email"},
 )
 
-# OAuth2 for Token Authentication
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+# ✅ Register Google OAuth
+oauth.register(
+    name="google",
+    client_id=os.getenv("GOOGLE_CLIENT_ID"),
+    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+    authorize_url="https://accounts.google.com/o/oauth2/auth",
+    access_token_url="https://oauth2.googleapis.com/token",
+    userinfo_endpoint="https://www.googleapis.com/oauth2/v2/userinfo",
+    client_kwargs={"scope": "openid email profile"},
+)
 
-# JWT Secret Key (Replace with a secure secret)
-SECRET_KEY = os.getenv("JWT_SECRET", "mysecret")
-ALGORITHM = "HS256"
-
-# Function to verify JWT token
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-
-        if username is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        return {"username": username}
-
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-
-# CORS Middleware (Allow frontend to communicate with backend)
+# CORS Middleware (Allow frontend communication)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # Adjust for production
@@ -59,30 +50,56 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API routes
-app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
-app.include_router(habits.router, prefix="/habits", tags=["Habits"])
-app.include_router(users.router, prefix="/api", tags=["Users"])
+# ✅ GitHub OAuth Login
+@app.get("/auth/github/login")
+async def github_login(request: Request):
+    redirect_uri = "http://localhost:8000/auth/github/callback"  # Must match GitHub settings
+    return await oauth.github.authorize_redirect(request, redirect_uri)
 
-# Protect habits route (User must be logged in)
-@app.get("/habits/protected", dependencies=[Depends(get_current_user)])
-def get_protected_habits():
+# ✅ GitHub OAuth Callback
+@app.get("/auth/github/callback")
+async def github_callback(request: Request):
+    token = await oauth.github.authorize_access_token(request)
+    user_info = await oauth.github.get("https://api.github.com/user", token=token)
+
+    if not user_info:
+        raise HTTPException(status_code=400, detail="GitHub authentication failed")
+
+    user_data = user_info.json()
+    return {"user": user_data}
+
+# ✅ Google OAuth Login
+@app.get("/auth/google/login")
+async def google_login(request: Request):
+    redirect_uri = "http://localhost:8000/auth/google/callback"  # Must match Google settings
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+# ✅ Google OAuth Callback
+@app.get("/auth/google/callback")
+async def google_callback(request: Request):
+    token = await oauth.google.authorize_access_token(request)
+    user_info = await oauth.google.get("https://www.googleapis.com/oauth2/v2/userinfo", token=token)
+
+    if not user_info:
+        raise HTTPException(status_code=400, detail="Google authentication failed")
+
+    user_data = user_info.json()
+    return {"user": user_data}
+
+# ✅ Protected Route (Requires Login)
+@app.get("/habits/protected")
+async def protected_habits():
     return {"habits": ["Exercise", "Reading", "Meditation"]}
 
-
-# Define frontend path
+# ✅ Serve frontend if exists
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
-
-# Serve frontend files if they exist
 if os.path.exists(frontend_path):
     app.mount("/frontend", StaticFiles(directory=frontend_path, html=True), name="frontend")
-else:
-    print("⚠️ Frontend directory not found! Run `npm run build`.")
 
-# Serve index.html directly (Fixes Vue routing issues)
+# ✅ Serve index.html
 @app.get("/", include_in_schema=False)
 async def serve_vue():
     index_path = os.path.join(frontend_path, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    return {"error": "Frontend build not found. Please run `npm run build` and ensure the dist folder is in the backend."}
+    return {"error": "Frontend build not found. Run `npm run build`."}
