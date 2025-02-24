@@ -133,26 +133,6 @@ export default {
 </script>
 
 <style scoped>
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(to bottom, #4f46e5, #3b82f6);
-  padding: 20px;
-  position: relative;
-}
-
-.auth-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
-  width: 400px;
-  text-align: center;
-  transition: transform 0.3s ease-in-out;
-}
-
 .header-title {
   font-size: 28px;
   font-weight: bold;
@@ -198,5 +178,91 @@ export default {
 .dark-mode {
   background: #121212;
   color: white;
+}
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f4f4f4;
+}
+
+.auth-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+}
+
+.btn-custom {
+  background: #28a745;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-custom:hover {
+  background: #218838;
+}
+
+.oauth-buttons {
+  margin-top: 10px;
+}
+
+.btn-google {
+  background: #db4437;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-github {
+  background: #24292e;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.toggle-text {
+  margin-top: 10px;
+  color: blue;
+  cursor: pointer;
 }
 </style>
