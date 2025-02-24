@@ -100,7 +100,7 @@ body {
 }
 
 /* Prevent quote section resizing */
-#quote {
+.quote {
   min-height: 40px; /* Ensures it doesn’t shrink or expand */
   display: flex;
   align-items: center;
