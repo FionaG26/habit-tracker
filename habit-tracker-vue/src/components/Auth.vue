@@ -1,7 +1,8 @@
 <template>
   <div class="auth-container">
     <div class="auth-card">
-      <h2 class="title">Habit Tracker</h2>
+      <h2 class="title">Habit Tracker 🎯</h2>
+      <p class="subtitle">Track your progress & build better habits!</p>
 
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
@@ -23,6 +24,8 @@
           {{ isLogin ? 'Login' : 'Register' }}
         </button>
 
+        <div class="loading-spinner" v-if="loading"></div>
+
         <div class="oauth-buttons">
           <button @click="oauthLogin('google')" class="btn-google">Login with Google</button>
           <button @click="oauthLogin('github')" class="btn-github">Login with GitHub</button>
@@ -32,6 +35,11 @@
       <p class="toggle-text" @click="toggleAuthMode">
         {{ isLogin ? "Don't have an account? Register here!" : "Already have an account? Login here!" }}
       </p>
+      
+      <label class="theme-toggle">
+        <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
+        🌞 / 🌙
+      </label>
     </div>
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
   </div>
@@ -39,7 +47,7 @@
 
 <script>
 import API from '../services/api';
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import confetti from 'canvas-confetti';
 
 export default {
@@ -48,6 +56,8 @@ export default {
     const showPassword = ref(false);
     const form = ref({ username: '', password: '' });
     const confettiCanvas = ref(null);
+    const loading = ref(false);
+    const darkMode = ref(localStorage.getItem('darkMode') === 'true');
 
     const toggleAuthMode = () => {
       isLogin.value = !isLogin.value;
@@ -69,15 +79,20 @@ export default {
 
     const handleSubmit = async () => {
       try {
+        loading.value = true;
         const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
         const response = await API.post(endpoint, form.value);
 
         localStorage.setItem('token', response.data.access_token);
-        alert(`${isLogin.value ? 'Logged in' : 'Registered'} successfully!`);
-        if (!isLogin.value) playConfetti();
-        window.location.href = "/dashboard";
+        setTimeout(() => {
+          alert(`${isLogin.value ? '🎉 Logged in' : '🎊 Registered'} successfully!`);
+          playConfetti();
+          window.location.href = "/dashboard";
+        }, 500);
       } catch (error) {
         alert(error.response.data.detail || 'Something went wrong!');
+      } finally {
+        loading.value = false;
       }
     };
 
@@ -85,7 +100,17 @@ export default {
       window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
     };
 
-    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas };
+    const toggleTheme = () => {
+      darkMode.value = !darkMode.value;
+      document.body.classList.toggle('dark-mode', darkMode.value);
+      localStorage.setItem('darkMode', darkMode.value);
+    };
+
+    onMounted(() => {
+      document.body.classList.toggle('dark-mode', darkMode.value);
+    });
+
+    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
   }
 };
 </script>
@@ -106,123 +131,48 @@ export default {
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
-  width: 380px;
+  width: 400px;
   text-align: center;
   transition: transform 0.3s ease-in-out;
-}
-
-.auth-card:hover {
-  transform: translateY(-5px);
 }
 
 .title {
   font-size: 26px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 20px;
 }
 
-.form-group {
-  margin-bottom: 15px;
-  text-align: left;
-}
-
-.form-control {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-  transition: border 0.3s;
-}
-
-.form-control:focus {
-  border-color: #4f46e5;
-  outline: none;
-}
-
-.password-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  cursor: pointer;
-  font-size: 18px;
-  color: #4f46e5;
-}
-
-.btn-custom {
-  background: #4f46e5;
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background 0.3s ease, transform 0.2s;
-}
-
-.btn-custom:hover {
-  background: #3b82f6;
-  transform: scale(1.05);
-}
-
-.oauth-buttons {
-  margin-top: 15px;
-}
-
-.btn-google,
-.btn-github {
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.btn-google {
-  background: #db4437;
-  color: white;
-  margin-bottom: 10px;
-}
-
-.btn-github {
-  background: #24292e;
-  color: white;
-}
-
-.btn-google:hover,
-.btn-github:hover {
-  opacity: 0.85;
-}
-
-.toggle-text {
-  margin-top: 15px;
+.subtitle {
   font-size: 14px;
-  color: #4f46e5;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.theme-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
   cursor: pointer;
-  transition: color 0.3s;
 }
 
-.toggle-text:hover {
-  color: #3b82f6;
-}
-
-.confetti-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+.dark-mode {
+  background: #121212;
+  color: white;
 }
 </style>
