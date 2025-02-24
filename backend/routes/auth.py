@@ -6,7 +6,7 @@ from database import get_db
 from passlib.context import CryptContext
 from .auth_utils import create_access_token, verify_password, get_current_user
 from authlib.integrations.starlette_client import OAuth
-from starlette.responses import RedirectResponse
+from fastapi import Request
 from dotenv import load_dotenv
 from datetime import timedelta
 import os
