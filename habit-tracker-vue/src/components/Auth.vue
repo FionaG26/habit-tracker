@@ -1,25 +1,25 @@
 <template>
   <div class="auth-container">
     <div class="auth-card">
-      <h2 class="title">{{ isLogin ? 'Login' : 'Register' }}</h2>
+      <h2 class="title">Habit Tracker</h2>
 
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
           <label for="username">Username</label>
-          <input v-model="form.username" type="text" class="form-control" id="username" required />
+          <input v-model="form.username" type="text" class="form-control" id="username" required placeholder="Enter your username" />
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
           <div class="password-wrapper">
-            <input v-model="form.password" :type="showPassword ? 'text' : 'password'" class="form-control" id="password" required />
+            <input v-model="form.password" :type="showPassword ? 'text' : 'password'" class="form-control" id="password" required placeholder="Create a strong password" />
             <span class="toggle-password" @click="togglePasswordVisibility">
               {{ showPassword ? '🙈' : '👁️' }}
             </span>
           </div>
         </div>
 
-        <button type="submit" class="btn-custom">
+        <button type="submit" class="btn-custom" @click="playConfetti">
           {{ isLogin ? 'Login' : 'Register' }}
         </button>
 
@@ -33,18 +33,21 @@
         {{ isLogin ? "Don't have an account? Register here!" : "Already have an account? Login here!" }}
       </p>
     </div>
+    <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
   </div>
 </template>
 
 <script>
 import API from '../services/api';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import confetti from 'canvas-confetti';
 
 export default {
   setup() {
     const isLogin = ref(true);
     const showPassword = ref(false);
     const form = ref({ username: '', password: '' });
+    const confettiCanvas = ref(null);
 
     const toggleAuthMode = () => {
       isLogin.value = !isLogin.value;
@@ -54,16 +57,25 @@ export default {
       showPassword.value = !showPassword.value;
     };
 
+    const playConfetti = () => {
+      if (!isLogin.value) {
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    };
+
     const handleSubmit = async () => {
       try {
         const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
         const response = await API.post(endpoint, form.value);
 
-        // Save token in localStorage
         localStorage.setItem('token', response.data.access_token);
-
         alert(`${isLogin.value ? 'Logged in' : 'Registered'} successfully!`);
-        window.location.href = "/dashboard"; // Redirect to dashboard
+        if (!isLogin.value) playConfetti();
+        window.location.href = "/dashboard";
       } catch (error) {
         alert(error.response.data.detail || 'Something went wrong!');
       }
@@ -73,13 +85,12 @@ export default {
       window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
     };
 
-    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin };
+    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas };
   }
 };
 </script>
 
 <style scoped>
-/* Center container */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -87,9 +98,9 @@ export default {
   height: 100vh;
   background: linear-gradient(to bottom, #4f46e5, #3b82f6);
   padding: 20px;
+  position: relative;
 }
 
-/* Card container */
 .auth-card {
   background: white;
   padding: 25px;
@@ -100,26 +111,22 @@ export default {
   transition: transform 0.3s ease-in-out;
 }
 
-/* Card hover effect */
 .auth-card:hover {
   transform: translateY(-5px);
 }
 
-/* Title */
 .title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
-  margin-bottom: 20px;
   color: #333;
+  margin-bottom: 20px;
 }
 
-/* Form group */
 .form-group {
   margin-bottom: 15px;
   text-align: left;
 }
 
-/* Form input fields */
 .form-control {
   width: 100%;
   padding: 12px;
@@ -134,14 +141,12 @@ export default {
   outline: none;
 }
 
-/* Password wrapper */
 .password-wrapper {
   display: flex;
   align-items: center;
   position: relative;
 }
 
-/* Password toggle icon */
 .toggle-password {
   position: absolute;
   right: 12px;
@@ -150,7 +155,6 @@ export default {
   color: #4f46e5;
 }
 
-/* Custom submit button */
 .btn-custom {
   background: #4f46e5;
   color: white;
@@ -161,14 +165,14 @@ export default {
   width: 100%;
   font-size: 16px;
   font-weight: bold;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s;
 }
 
 .btn-custom:hover {
   background: #3b82f6;
+  transform: scale(1.05);
 }
 
-/* OAuth Buttons */
 .oauth-buttons {
   margin-top: 15px;
 }
@@ -201,7 +205,6 @@ export default {
   opacity: 0.85;
 }
 
-/* Toggle between login & register */
 .toggle-text {
   margin-top: 15px;
   font-size: 14px;
@@ -212,5 +215,14 @@ export default {
 
 .toggle-text:hover {
   color: #3b82f6;
+}
+
+.confetti-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 </style>
