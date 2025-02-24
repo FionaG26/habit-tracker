@@ -3,11 +3,11 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
 export default defineConfig({
-  base: "/",  // Ensure correct asset paths
   plugins: [vue()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  base: "/frontend/", // Ensure correct asset paths when served via FastAPI
 });
