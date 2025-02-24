@@ -27,6 +27,7 @@ import gsap from 'gsap';
 const HabitForm = defineAsyncComponent(() => import('./components/HabitForm.vue'));
 const HabitList = defineAsyncComponent(() => import('./components/HabitList.vue'));
 const ProgressBar = defineAsyncComponent(() => import('./components/ProgressBar.vue'));
+const Auth = defineAsyncComponent(() => import('./components/Auth.vue'));
 
 export default {
   components: {
