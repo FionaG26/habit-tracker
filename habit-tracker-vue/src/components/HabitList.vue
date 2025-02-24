@@ -94,7 +94,7 @@ export default {
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += "Title,Streak,Completed Dates\n";
       this.habits.forEach(habit => {
-        csvContent += `"${habit.title}",${habit.streak},"${habit.completed_dates.join(",")}"\n`;
+        csvContent += `"${habit.title}",${habit.streak},"${habit.completed_dates.join("," )}"\n`;
       });
 
       let encodedUri = encodeURI(csvContent);
@@ -123,7 +123,7 @@ export default {
 }
 .habit-item {
   display: flex;
-  justify-between;
+  justify-content: space-between;
   align-items: center;
   background: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -152,5 +152,29 @@ export default {
   height: 100%;
   background: #4caf50;
   transition: width 0.5s ease-in-out;
+}
+.complete-btn {
+  background: #4caf50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.complete-btn:hover {
+  background: #388e3c;
+}
+.delete-btn {
+  background: #f44336;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.delete-btn:hover {
+  background: #d32f2f;
 }
 </style>
