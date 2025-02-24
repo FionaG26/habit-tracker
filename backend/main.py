@@ -15,6 +15,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include API routes
+app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(habits.router, prefix="/habits", tags=["Habits"])
+app.include_router(users.router, prefix="/api", tags=["Users"])
+
 # Define frontend path
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
 
