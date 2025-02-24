@@ -17,6 +17,7 @@ def create_habit(habit: HabitCreate, db: Session = Depends(get_db), current_user
     return db_habit
 
 # ✅ Get all habits for the logged-in user
+@router.get("", response_model=list[HabitResponse])  
 @router.get("/", response_model=list[HabitResponse])
 def get_habits(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return db.query(Habit).filter(Habit.user_id == current_user.id).all()
