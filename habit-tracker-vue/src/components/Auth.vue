@@ -53,15 +53,19 @@ export default {
     };
 
     const handleSubmit = async () => {
-      try {
-        const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
-        const response = await API.post(endpoint, form.value);
-        localStorage.setItem('token', response.data.access_token);
-        alert(`${isLogin.value ? 'Logged in' : 'Registered'} successfully!`);
-      } catch (error) {
-        alert(error.response.data.detail || 'Something went wrong!');
-      }
-    };
+  try {
+    const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
+    const response = await API.post(endpoint, form.value);
+
+    // Save token in localStorage
+    localStorage.setItem('token', response.data.access_token);
+
+    alert(`${isLogin.value ? 'Logged in' : 'Registered'} successfully!`);
+    window.location.href = "/dashboard"; // Redirect to dashboard
+  } catch (error) {
+    alert(error.response.data.detail || 'Something went wrong!');
+  }
+};
 
     const oauthLogin = (provider) => {
       window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
