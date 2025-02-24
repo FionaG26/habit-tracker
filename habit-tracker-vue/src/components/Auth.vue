@@ -1,6 +1,7 @@
 <template>
   <div class="auth-container">
     <div class="auth-card">
+      <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
       <h2 class="title">Habit Tracker 🎯</h2>
       <p class="subtitle">Track your progress & build better habits!</p>
 
@@ -110,18 +111,19 @@ export default {
     onMounted(() => {
       document.body.classList.toggle('dark-mode', darkMode.value);
       
-      const header = document.querySelector(".title");
-      const footer = document.querySelector(".toggle-text");
-      const oauthButtons = document.querySelector(".oauth-buttons");
-      
+      const header = document.querySelector(".header-title");
       if (header) {
         gsap.from(header, { opacity: 0, y: -20, duration: 1 });
       }
+      
+      const title = document.querySelector(".title");
+      if (title) {
+        gsap.from(title, { opacity: 0, y: -20, duration: 1 });
+      }
+
+      const footer = document.querySelector(".toggle-text");
       if (footer) {
         gsap.from(footer, { opacity: 0, y: 20, duration: 1 });
-      }
-      if (oauthButtons) {
-        gsap.from(oauthButtons, { opacity: 0, scale: 0.9, duration: 1 });
       }
     });
 
@@ -151,28 +153,50 @@ export default {
   transition: transform 0.3s ease-in-out;
 }
 
-.oauth-buttons {
-  margin-top: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.header-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-.btn-google, .btn-github {
-  padding: 10px;
-  width: 100%;
-  border: none;
-  border-radius: 6px;
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.theme-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
   cursor: pointer;
 }
 
-.btn-google {
-  background-color: #db4437;
-  color: white;
-}
-
-.btn-github {
-  background-color: #333;
+.dark-mode {
+  background: #121212;
   color: white;
 }
 </style>
