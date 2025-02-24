@@ -12,6 +12,11 @@
     <button @click="toggleDarkMode" class="mt-4 p-2 rounded-lg bg-gray-700 text-white">
       Toggle Dark Mode
     </button>
+
+    <!-- Footer -->
+    <footer class="mt-6 text-center text-gray-300 text-sm">
+      Designed with ❤️ by <a href="https://github.com/FionaG26/habit-tracker" class="text-blue-400 hover:text-blue-600 transition">Fiona Githaiga</a>
+    </footer>
   </div>
 </template>
 
@@ -64,6 +69,9 @@ export default {
 
       // Simple animation for the header
       gsap.to("h1", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 });
+
+      // Animate footer
+      gsap.from("footer", { opacity: 0, y: 20, duration: 1 });
     });
 
     return { toggleDarkMode, quote };
@@ -82,7 +90,7 @@ body {
   align-items: center;
   justify-content: center;
   color: white;
-  transition: background 0.3s ease;
+  transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
 }
 
 .container {
@@ -91,6 +99,16 @@ body {
   border-radius: 15px;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  
+  width: 80vw;
+  max-width: 900px;
+  min-height: 60vh;
+  max-height: 90vh;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Dark mode styles */
@@ -101,16 +119,23 @@ body {
 
 /* Prevent quote section resizing */
 .quote {
-  min-height: 40px; /* Ensures it doesn’t shrink or expand */
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  width: 100%; /* Ensures it takes full width of the parent container */
-  max-width: 500px; /* Adjust as needed */
-  margin: auto; /* Centers the quote */
-  overflow: hidden; /* Prevents unwanted text wrapping issues */
-  white-space: nowrap; /* Prevents text from wrapping */
-  text-overflow: ellipsis; /* Adds "..." when text overflows */
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Footer styles */
+footer a:hover {
+  color: #ffcc00;
+  transform: scale(1.1);
+  transition: 0.3s;
 }
 </style>
