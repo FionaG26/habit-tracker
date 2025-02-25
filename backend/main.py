@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from authlib.integrations.starlette_client import OAuth
 import os
 from dotenv import load_dotenv
-from auth import router as auth_router
+from routes.auth import router as auth_router
 
 # Load environment variables
 load_dotenv()
