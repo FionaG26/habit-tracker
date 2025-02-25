@@ -137,9 +137,16 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: fixed; /* Ensures it takes the full screen */
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
-  background: linear-gradient(to right, #ff9a9e, #fad0c4);
+  background: none; /* Removes any background */
+  overflow: hidden;
+  padding: 20px; /* Adds space if needed */
 }
+
 
 .confetti-canvas {
   position: fixed;
