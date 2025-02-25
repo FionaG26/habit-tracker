@@ -46,6 +46,92 @@
   </div>
 </template>
 
+<script>
+import API from '../services/api';
+import { ref, watch, onMounted } from 'vue';
+import confetti from 'canvas-confetti';
+import gsap from "gsap";
+
+export default {
+  setup() {
+    const isLogin = ref(true);
+    const showPassword = ref(false);
+    const form = ref({ username: '', password: '' });
+    const confettiCanvas = ref(null);
+    const loading = ref(false);
+    const darkMode = ref(localStorage.getItem('darkMode') === 'true');
+
+    const toggleAuthMode = () => {
+      isLogin.value = !isLogin.value;
+    };
+
+    const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value;
+    };
+
+    const playConfetti = () => {
+      if (!isLogin.value) {
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    };
+
+    const handleSubmit = async () => {
+      try {
+        loading.value = true;
+        const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
+        const response = await API.post(endpoint, form.value);
+
+        localStorage.setItem('token', response.data.access_token);
+        setTimeout(() => {
+          alert(${isLogin.value ? '🎉 Logged in' : '🎊 Registered'} successfully!);
+          playConfetti();
+          window.location.href = "/dashboard";
+        }, 500);
+      } catch (error) {
+        alert(error.response.data.detail || 'Something went wrong!');
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const oauthLogin = (provider) => {
+      window.location.href = http://127.0.0.1:8000/auth/${provider}/login;
+    };
+
+    const toggleTheme = () => {
+      darkMode.value = !darkMode.value;
+      document.body.classList.toggle('dark-mode', darkMode.value);
+      localStorage.setItem('darkMode', darkMode.value);
+    };
+
+    onMounted(() => {
+      document.body.classList.toggle('dark-mode', darkMode.value);
+      
+      const header = document.querySelector(".header-title");
+      if (header) {
+        gsap.from(header, { opacity: 0, y: -20, duration: 1 });
+      }
+      
+      const title = document.querySelector(".title");
+      if (title) {
+        gsap.from(title, { opacity: 0, y: -20, duration: 1 });
+      }
+
+      const footer = document.querySelector(".toggle-text");
+      if (footer) {
+        gsap.from(footer, { opacity: 0, y: 20, duration: 1 });
+      }
+    });
+
+    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
+  }
+};
+</script>
+
 <style scoped>
 .auth-container {
   display: flex;
