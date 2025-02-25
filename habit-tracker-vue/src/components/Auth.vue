@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-container">
+  <div :class="{'dark-mode': darkMode}" class="auth-container">
     <div class="auth-card">
       <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
       <h2 class="title">Habit Tracker 🎯</h2>
@@ -39,10 +39,16 @@
       
       <label class="theme-toggle">
         <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
-        🌞 / 🌙
+        <span class="toggle-icon">🌞 / 🌙</span>
       </label>
     </div>
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
+
+    <!-- Footer -->
+    <footer class="footer">
+      Designed with ❤️ by 
+      <a href="https://github.com/FionaG26/habit-tracker" class="footer-link">Fiona Githaiga</a>
+    </footer>
   </div>
 </template>
 
@@ -111,19 +117,16 @@ export default {
     onMounted(() => {
       document.body.classList.toggle('dark-mode', darkMode.value);
       
-      const header = document.querySelector(".header-title");
-      if (header) {
-        gsap.from(header, { opacity: 0, y: -20, duration: 1 });
+      if (document.querySelector(".header-title")) {
+        gsap.from(".header-title", { opacity: 0, y: -20, duration: 1 });
       }
       
-      const title = document.querySelector(".title");
-      if (title) {
-        gsap.from(title, { opacity: 0, y: -20, duration: 1 });
+      if (document.querySelector(".title")) {
+        gsap.from(".title", { opacity: 0, y: -20, duration: 1 });
       }
 
-      const footer = document.querySelector(".toggle-text");
-      if (footer) {
-        gsap.from(footer, { opacity: 0, y: 20, duration: 1 });
+      if (document.querySelector(".footer")) {
+        gsap.from(".footer", { opacity: 0, y: 20, duration: 1 });
       }
     });
 
@@ -135,68 +138,41 @@ export default {
 <style scoped>
 .auth-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
-  background: none;
+  background: var(--background-color, #ffffff);
   padding: 20px;
-  position: relative;
-}
-
-.auth-card {
-  background: gray;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
-  width: 400px;
-  text-align: center;
-  transition: transform 0.3s ease-in-out;
-}
-
-.header-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.title {
-  font-size: 26px;
-  font-weight: bold;
-  color: #333;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 15px;
-}
-
-.loading-spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #4f46e5;
-  border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  animation: spin 1s linear infinite;
-  margin: 10px auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.theme-toggle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
-  cursor: pointer;
 }
 
 .dark-mode {
-  background: #121212;
+  --background-color: #121212;
   color: white;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+  width: 420px;
+  text-align: center;
+}
+
+.footer {
+  position: absolute;
+  bottom: 20px;
+  font-size: 14px;
+  color: gray;
+}
+
+.footer-link {
+  color: #4A90E2;
+  text-decoration: none;
 }
 </style>
