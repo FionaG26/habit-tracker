@@ -141,8 +141,18 @@ export default {
   background: linear-gradient(to right, #ff9a9e, #fad0c4);
 }
 
+.confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* Prevents blocking interactions */
+  background: transparent; /* Ensures no background */
+}
+  
 .auth-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.95); /* Slight transparency to soften */
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
