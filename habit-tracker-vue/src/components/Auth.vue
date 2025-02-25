@@ -2,7 +2,6 @@
   <div class="auth-container">
     <div class="auth-card">
       <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
-      <h2 class="title">Habit Tracker 🎯</h2>
       <p class="subtitle">Track your progress & build better habits!</p>
 
       <form @submit.prevent="handleSubmit">
@@ -148,7 +147,7 @@ body {
   padding: 50px;
   border-radius: 15px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
-  width: 550px; /* Made wider */
+  width: 1000px; /* Made wider */
   max-width: 90%;
   text-align: center;
   transition: transform 0.3s ease-in-out;
@@ -177,6 +176,7 @@ body {
 .form-group {
   margin-bottom: 15px;
   text-align: left;
+  text-color: black;
 }
 
 .form-control {
@@ -277,9 +277,6 @@ body {
   text-align: center;
   font-size: 14px;
   color: #444; /* Slightly darker for better readability */
-  padding: 15px 20px;
-  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1); /* Soft top shadow */
-  backdrop-filter: blur(5px); /* Modern glassmorphism effect */
 }
 
 .footer-link {
