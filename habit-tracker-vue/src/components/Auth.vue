@@ -332,7 +332,7 @@ export default {
   position: absolute;
   bottom: 20px;
   font-size: 14px;
-  color: gray;
+  color: black;
 }
 
 .footer-link {
