@@ -6,12 +6,16 @@ from fastapi.responses import FileResponse
 from authlib.integrations.starlette_client import OAuth
 import os
 from dotenv import load_dotenv
+from auth import router as auth_router
 
 # Load environment variables
 load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI(title="Habit Tracker API", version="1.0", redirect_slashes=False)
+
+# Include the authentication router
+app.include_router(auth_router, prefix="/auth")  # ✅ Add this line
 
 # Add SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"))
