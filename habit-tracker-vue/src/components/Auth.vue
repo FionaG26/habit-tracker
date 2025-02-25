@@ -2,6 +2,7 @@
   <div class="auth-container">
     <div class="auth-card">
       <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
+      <h2 class="title">Habit Tracker 🎯</h2>
       <p class="subtitle">Track your progress & build better habits!</p>
 
       <form @submit.prevent="handleSubmit">
@@ -20,11 +21,11 @@
           </div>
         </div>
 
-        <button type="submit" class="btn-custom" :disabled="loading">
+        <button type="submit" class="btn-custom" @click="playConfetti">
           {{ isLogin ? 'Login' : 'Register' }}
         </button>
 
-        <div v-if="loading" class="loading-spinner"></div>
+        <div class="loading-spinner" v-if="loading"></div>
 
         <div class="oauth-buttons">
           <button @click="oauthLogin('google')" class="btn-google">Login with Google</button>
@@ -35,275 +36,167 @@
       <p class="toggle-text" @click="toggleAuthMode">
         {{ isLogin ? "Don't have an account? Register here!" : "Already have an account? Login here!" }}
       </p>
+      
+      <label class="theme-toggle">
+        <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
+        🌞 / 🌙
+      </label>
     </div>
-
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
-
-    <!-- Footer -->
-    <footer class="footer">
-      Designed with ❤️ by 
-      <a href="https://github.com/FionaG26/habit-tracker" class="footer-link">Fiona Githaiga</a>
-    </footer>
   </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue';
+<script>
+import API from '../services/api';
+import { ref, watch, onMounted } from 'vue';
+import confetti from 'canvas-confetti';
+import gsap from "gsap";
 
-// Reactive state
-const isLogin = ref(true);
-const showPassword = ref(false);
-const loading = ref(false);
-const confettiCanvas = ref(null);
-const form = reactive({ username: '', password: '' });
+export default {
+  setup() {
+    const isLogin = ref(true);
+    const showPassword = ref(false);
+    const form = ref({ username: '', password: '' });
+    const confettiCanvas = ref(null);
+    const loading = ref(false);
+    const darkMode = ref(localStorage.getItem('darkMode') === 'true');
 
-// Toggle login/register mode
-const toggleAuthMode = () => {
-  isLogin.value = !isLogin.value;
-};
+    const toggleAuthMode = () => {
+      isLogin.value = !isLogin.value;
+    };
 
-// Show/hide password
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value;
-};
+    const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value;
+    };
 
-// Handle form submission
-const handleSubmit = () => {
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-    playConfetti();
-  }, 1500);
-};
+    const playConfetti = () => {
+      if (!isLogin.value) {
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    };
 
-// OAuth login placeholder
-const oauthLogin = (provider) => {
-  alert(`Logging in with ${provider}...`);
-};
+    const handleSubmit = async () => {
+      try {
+        loading.value = true;
+        const endpoint = isLogin.value ? '/auth/login' : '/auth/register';
+        const response = await API.post(endpoint, form.value);
 
-// Confetti animation effect
-const playConfetti = () => {
-  const canvas = confettiCanvas.value;
-  if (!canvas) return;
+        localStorage.setItem('token', response.data.access_token);
+        setTimeout(() => {
+          alert(${isLogin.value ? '🎉 Logged in' : '🎊 Registered'} successfully!);
+          playConfetti();
+          window.location.href = "/dashboard";
+        }, 500);
+      } catch (error) {
+        alert(error.response.data.detail || 'Something went wrong!');
+      } finally {
+        loading.value = false;
+      }
+    };
 
-  const ctx = canvas.getContext('2d');
-  const particles = Array.from({ length: 50 }, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 4 + 1,
-    dx: Math.random() * 4 - 2,
-    dy: Math.random() * 4 - 2,
-    color: `hsl(${Math.random() * 360}, 100%, 50%)`
-  }));
+    const oauthLogin = (provider) => {
+      window.location.href = http://127.0.0.1:8000/auth/${provider}/login;
+    };
 
-  const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.x += p.dx;
-      p.y += p.dy;
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
+    const toggleTheme = () => {
+      darkMode.value = !darkMode.value;
+      document.body.classList.toggle('dark-mode', darkMode.value);
+      localStorage.setItem('darkMode', darkMode.value);
+    };
+
+    onMounted(() => {
+      document.body.classList.toggle('dark-mode', darkMode.value);
+      
+      const header = document.querySelector(".header-title");
+      if (header) {
+        gsap.from(header, { opacity: 0, y: -20, duration: 1 });
+      }
+      
+      const title = document.querySelector(".title");
+      if (title) {
+        gsap.from(title, { opacity: 0, y: -20, duration: 1 });
+      }
+
+      const footer = document.querySelector(".toggle-text");
+      if (footer) {
+        gsap.from(footer, { opacity: 0, y: 20, duration: 1 });
+      }
     });
-    requestAnimationFrame(animate);
-  };
-  animate();
-};
-// GSAP animations
-onMounted(() => {
-  if (header.value && footer.value) {
-    gsap.from(header.value, { opacity: 0, y: -20, duration: 1 });
-    gsap.from(footer.value, { opacity: 0, y: 20, duration: 1, delay: 0.5 });
+
+    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
   }
-});
+};
 </script>
 
-
 <style scoped>
-/* Base Styling */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
+  height: 100vh;
   background: none;
+  padding: 20px;
+  position: relative;
 }
-.dark-mode {
-  --bg: #1e1e1e;
-  --text: #fff;
-  --card: #333;
-}
+
 .auth-card {
- background: hsla(0, 0%, 0%, 0.3);
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+  width: 400px;
   text-align: center;
-  width: 100%;
-  max-width: 400px;
+  transition: transform 0.3s ease-in-out;
 }
+
 .header-title {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
 }
+
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+}
+
 .subtitle {
-  font-size: 1rem;
-  color: gray;
-  margin-bottom: 1rem;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
 }
 
-/* Form */
-.form-group {
-  text-align: left;
-  margin-bottom: 1rem;
-}
-.form-control {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-.password-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-.toggle-password {
-  position: absolute;
-  right: 10px;
-  cursor: pointer;
-}
-
-/* Buttons */
-.btn-custom {
-  width: 100%;
-  padding: 0.8rem;
-  background: #5c67f2;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-.btn-custom:disabled {
-  background: gray;
-  cursor: not-allowed;
-}
-.btn-google, .btn-github {
-  width: 100%;
-  padding: 0.8rem;
-  margin-top: 0.5rem;
-  border: none;
-  cursor: pointer;
-}
-.btn-google {
-  background: #db4437;
-  color: white;
-}
-.btn-github {
-  background: #333;
-  color: white;
-}
-
-btn-custom.loading {
-  position: relative;
-}
-.btn-custom.loading::after {
-  content: "";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  width: 14px;
-  height: 14px;
-  border: 2px solid white;
-  border-top-color: transparent;
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4f46e5;
   border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
 }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* Toggle Switch */
 .theme-toggle {
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  align-items: center;
+  margin-top: 10px;
   cursor: pointer;
 }
-.toggle-icon {
-  font-size: 1.5rem;
-}
 
-/* Footer */
-.footer {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  color: black
-}
-.footer-link {
-  color: #5c67f2;
-  text-decoration: none;
-}
-
-/* Confetti */
-.confetti-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.theme-toggle input {
-  display: none;
-}
-.theme-toggle span {
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-  background: #ddd;
-  border-radius: 10px;
-  position: relative;
-  transition: background 0.3s ease;
-}
-.theme-toggle span::before {
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  top: 1px;
-  left: 2px;
-  transition: transform 0.3s ease;
-}
-input:checked + .toggle-icon {
-  background: #5c67f2;
-}
-input:checked + .toggle-icon::before {
-  transform: translateX(20px);
-}
-@media (max-width: 400px) {
-  .auth-card {
-    width: 90%;
-    padding: 1.5rem;
-  }
-}
-/* Footer */
-.footer {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-}
-.footer-link {
-  color: #5c67f2;
-  text-decoration: none;
+.dark-mode {
+  background: #121212;
+  color: white;
 }
 </style>
