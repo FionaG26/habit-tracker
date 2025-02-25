@@ -142,8 +142,7 @@ watch(darkMode, (newValue) => {
   align-items: center;
   min-height: 100vh;
   padding: 1rem;
-  background: var(--bg);
-  transition: background 0.3s ease;
+  background: none;
 }
 .dark-mode {
   --bg: #1e1e1e;
@@ -151,7 +150,7 @@ watch(darkMode, (newValue) => {
   --card: #333;
 }
 .auth-card {
-  background: var(--card, #fff);
+ background: hsla(0, 0%, 0%, 0.3);
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
