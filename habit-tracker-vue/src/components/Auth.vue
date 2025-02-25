@@ -50,7 +50,6 @@
     </footer>
   </div>
 </template>
-
 <script>
 import API from '../services/api';
 import { ref, watch, onMounted, nextTick } from 'vue';
@@ -59,6 +58,7 @@ import gsap from "gsap";
 
 export default {
   setup() {
+    // Reactive variables
     const isLogin = ref(true);
     const showPassword = ref(false);
     const form = ref({ username: '', password: '' });
@@ -68,14 +68,17 @@ export default {
     const headerTitle = ref(null);
     const footer = ref(null);
 
+    // Toggles login/register mode
     const toggleAuthMode = () => {
       isLogin.value = !isLogin.value;
     };
 
+    // Toggles password visibility
     const togglePasswordVisibility = () => {
       showPassword.value = !showPassword.value;
     };
 
+    // Confetti effect on successful registration
     const playConfetti = () => {
       if (!isLogin.value) {
         confetti({
@@ -86,6 +89,7 @@ export default {
       }
     };
 
+    // Handles login/register submission
     const handleSubmit = async () => {
       try {
         loading.value = true;
@@ -105,36 +109,51 @@ export default {
       }
     };
 
+    // OAuth login redirect
     const oauthLogin = (provider) => {
       window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
     };
 
+    // Toggles dark mode
     const toggleTheme = () => {
       darkMode.value = !darkMode.value;
       document.body.classList.toggle('dark-mode', darkMode.value);
       localStorage.setItem('darkMode', darkMode.value);
     };
 
+    // GSAP Animation function
     const animateElements = () => {
       if (headerTitle.value && footer.value) {
         gsap.from(headerTitle.value, { opacity: 0, y: -20, duration: 1 });
         gsap.from(footer.value, { opacity: 0, y: 20, duration: 1 });
       } else {
-        console.warn("GSAP target not found! Waiting for DOM updates...");
+        console.warn("GSAP target not found! Retrying...");
+        
+        // Retry animation after a short delay
+        setTimeout(() => {
+          if (headerTitle.value && footer.value) {
+            gsap.from(headerTitle.value, { opacity: 0, y: -20, duration: 1 });
+            gsap.from(footer.value, { opacity: 0, y: 20, duration: 1 });
+          } else {
+            console.error("GSAP animation failed: Elements still not found.");
+          }
+        }, 200); 
       }
     };
 
+    // Runs after component is mounted
     onMounted(async () => {
       document.body.classList.toggle('dark-mode', darkMode.value);
-      await nextTick(); // Ensure DOM elements exist
+      await nextTick(); // Ensures DOM elements exist
       animateElements();
     });
 
+    // Watches for changes in header/footer refs and re-runs animation
     watch([headerTitle, footer], () => {
       animateElements();
     });
 
-    // ✅ **Return the reactive variables and functions**
+    // Return all variables and functions for use in the template
     return {
       isLogin,
       form,
@@ -154,6 +173,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .auth-container {
