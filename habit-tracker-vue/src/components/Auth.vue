@@ -278,13 +278,12 @@ body {
   font-size: 14px;
   color: #444; /* Slightly darker for better readability */
   padding: 15px 20px;
-  background: rgba(255, 255, 255, 0.8); /* Subtle transparency */
   box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1); /* Soft top shadow */
   backdrop-filter: blur(5px); /* Modern glassmorphism effect */
 }
 
 .footer-link {
-  color: #007bff; /* More modern blue */
+  color: white;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease-in-out;
