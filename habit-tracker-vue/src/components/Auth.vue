@@ -114,20 +114,19 @@ export default {
     };
 
     onMounted(() => {
-      document.body.classList.toggle('dark-mode', darkMode.value);
-      
-      if (document.querySelector(".header-title")) {
-        gsap.from(".header-title", { opacity: 0, y: -20, duration: 1 });
-      }
-      
-      if (document.querySelector(".title")) {
-        gsap.from(".title", { opacity: 0, y: -20, duration: 1 });
-      }
+  document.body.classList.toggle('dark-mode', darkMode.value);
 
-      if (document.querySelector(".footer")) {
-        gsap.from(".footer", { opacity: 0, y: 20, duration: 1 });
-      }
-    });
+  const headerTitle = document.querySelector(".header-title");
+  if (headerTitle) {
+    gsap.from(headerTitle, { opacity: 0, y: -20, duration: 1 });
+  }
+
+  const footer = document.querySelector(".footer");
+  if (footer) {
+    gsap.from(footer, { opacity: 0, y: 20, duration: 1 });
+  }
+});
+
 
     return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
   }
