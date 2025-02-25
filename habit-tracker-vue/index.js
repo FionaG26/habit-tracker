@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Auth from '../components/Auth.vue';
-import Dashboard from '../components/Dashboard.vue';
 
 const routes = [
-  { path: '/', component: Auth },
-  { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } }
+  { path: '/', component: Auth }
 ];
 
 const router = createRouter({
@@ -12,12 +10,12 @@ const router = createRouter({
   routes
 });
 
-// Navigation guard: Redirect unauthorized users
+// Navigation guard (if needed in future)
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('token');
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/');
+    next('/');  // Redirect unauthorized users to login page
   } else {
     next();
   }
