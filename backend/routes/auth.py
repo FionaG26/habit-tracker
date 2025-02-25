@@ -5,7 +5,7 @@ from models import User
 from schemas import UserCreate, UserLogin, UserResponse, TokenResponse
 from database import get_db
 from passlib.context import CryptContext
-from .auth_utils import create_access_token, verify_password, get_current_user, get_password_hash as hash_password
+from .auth_utils import create_access_token, create_refresh_token, verify_password, get_current_user, get_password_hash as hash_password
 from authlib.integrations.starlette_client import OAuth
 from dotenv import load_dotenv
 from datetime import timedelta, datetime
