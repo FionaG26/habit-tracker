@@ -115,14 +115,32 @@ export default {
 </script>
 
 <style scoped>
-.auth-container {
+body {
+  background: linear-gradient(to right, #4f46e5, #9333ea);
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100vw;  /* Ensure it takes the full viewport width */
-  height: 100vh; /* Ensure it takes the full viewport height */
-  background: transparent; /* Keep background transparent */
+  justify-content: center;
+  color: white;
+  transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
+}
+
+.auth.container {
+  background: rgba(255, 255, 255, 0.1);
   padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  
+  width: 80vw;
+  max-width: 900px;
+  min-height: 60vh;
+  max-height: 90vh;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-card {
