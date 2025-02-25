@@ -87,7 +87,7 @@ export default {
 
         localStorage.setItem('token', response.data.access_token);
         setTimeout(() => {
-          alert(${isLogin.value ? '🎉 Logged in' : '🎊 Registered'} successfully!);
+          alert(`${isLogin.value ? '🎉 Logged in' : '🎊 Registered'} successfully!`);
           playConfetti();
           window.location.href = "/dashboard";
         }, 500);
