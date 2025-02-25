@@ -115,28 +115,44 @@ export default {
       localStorage.setItem('darkMode', darkMode.value);
     };
 
-   onMounted(async () => {
-  document.body.classList.toggle('dark-mode', darkMode.value);
-  
-  await nextTick(); // Ensure DOM elements exist
+    const animateElements = () => {
+      if (headerTitle.value && footer.value) {
+        gsap.from(headerTitle.value, { opacity: 0, y: -20, duration: 1 });
+        gsap.from(footer.value, { opacity: 0, y: 20, duration: 1 });
+      } else {
+        console.warn("GSAP target not found! Waiting for DOM updates...");
+      }
+    };
 
-  animateElements();
-});
+    onMounted(async () => {
+      document.body.classList.toggle('dark-mode', darkMode.value);
+      await nextTick(); // Ensure DOM elements exist
+      animateElements();
+    });
 
-// Watches for ref updates and re-runs GSAP if needed
-watch([headerTitle, footer], () => {
-  animateElements();
-});
+    watch([headerTitle, footer], () => {
+      animateElements();
+    });
 
-const animateElements = () => {
-  if (headerTitle.value && footer.value) {
-    gsap.from(headerTitle.value, { opacity: 0, y: -20, duration: 1 });
-    gsap.from(footer.value, { opacity: 0, y: 20, duration: 1 });
-  } else {
-    console.warn("GSAP target not found! Waiting for DOM updates...");
+    // ✅ **Return the reactive variables and functions**
+    return {
+      isLogin,
+      form,
+      showPassword,
+      toggleAuthMode,
+      togglePasswordVisibility,
+      handleSubmit,
+      oauthLogin,
+      playConfetti,
+      confettiCanvas,
+      loading,
+      darkMode,
+      toggleTheme,
+      headerTitle,
+      footer
+    };
   }
 };
-
 </script>
 
 <style scoped>
