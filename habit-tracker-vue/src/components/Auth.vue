@@ -147,7 +147,7 @@ body {
   padding: 50px;
   border-radius: 15px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
-  width: 1000px; /* Made wider */
+  width: 800px; /* Made wider */
   max-width: 90%;
   text-align: center;
   transition: transform 0.3s ease-in-out;
@@ -271,7 +271,7 @@ body {
 /* Footer Styling */
 .footer {
   position: absolute;
-  bottom: 0;
+  bottom: 20px;
   left: 0;
   right: 0;
   text-align: center;
