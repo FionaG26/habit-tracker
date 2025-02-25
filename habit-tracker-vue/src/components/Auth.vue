@@ -159,16 +159,19 @@ body {
 }
 
 .header-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
+  font-size: 32px; /* Slightly larger for emphasis */
+  font-weight: 700; /* Stronger presence */
+  color: #1a1a1a; /* Darker shade for better contrast */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Subtle depth effect */
+  margin-bottom: 12px;
 }
 
 .subtitle {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 20px;
+  font-size: 18px; /* Slightly larger for readability */
+  font-weight: 500;
+  color: #555; /* Warmer gray for better readability */
+  margin-bottom: 25px;
+  opacity: 0.9; /* Slight transparency for a sleek look */
 }
 
 .form-group {
