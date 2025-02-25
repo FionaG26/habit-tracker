@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'dark-mode': darkMode }" class="auth-container">
+  <div class="auth-container">
     <div class="auth-card">
       <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
       <p class="subtitle">Track your progress & build better habits!</p>
@@ -35,11 +35,6 @@
       <p class="toggle-text" @click="toggleAuthMode">
         {{ isLogin ? "Don't have an account? Register here!" : "Already have an account? Login here!" }}
       </p>
-      
-      <label class="theme-toggle">
-        <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
-        <span class="toggle-icon">{{ darkMode ? '🌙' : '🌞' }}</span>
-      </label>
     </div>
 
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
@@ -53,21 +48,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue';
+import { ref, reactive } from 'vue';
 
 // Reactive state
-const darkMode = ref(localStorage.getItem('darkMode') === 'true');
 const isLogin = ref(true);
 const showPassword = ref(false);
 const loading = ref(false);
 const confettiCanvas = ref(null);
 const form = reactive({ username: '', password: '' });
-
-// Toggle dark mode and persist in localStorage
-const toggleTheme = () => {
-  darkMode.value = !darkMode.value;
-  localStorage.setItem('darkMode', darkMode.value);
-};
 
 // Toggle login/register mode
 const toggleAuthMode = () => {
@@ -122,15 +110,6 @@ const playConfetti = () => {
   };
   animate();
 };
-
-onMounted(() => {
-  darkMode.value = localStorage.getItem('darkMode') === 'true';
-  document.body.classList.toggle('dark', darkMode.value);
-});
-
-watch(darkMode, (newValue) => {
-  document.body.classList.toggle('dark', newValue);
-});
 </script>
 
 
