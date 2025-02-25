@@ -1,8 +1,7 @@
 <template>
-  <div class="auth-container">
+  <div :class="{'dark-mode': darkMode}" class="auth-container">
     <div class="auth-card">
       <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
-      <h2 class="title">Habit Tracker 🎯</h2>
       <p class="subtitle">Track your progress & build better habits!</p>
 
       <form @submit.prevent="handleSubmit">
@@ -39,15 +38,15 @@
       
       <label class="theme-toggle">
         <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
-        <span class="toggle-icon">{{ darkMode ? '🌙' : '🌞' }}</span>
+        <span class="toggle-icon">🌞 / 🌙</span>
       </label>
     </div>
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
 
-    <!-- Footer --> 
-    <footer class="mt-6 text-center text-gray-300 text-sm">
+    <!-- Footer -->
+    <footer class="footer">
       Designed with ❤️ by 
-      <a href="https://github.com/FionaG26/habit-tracker" class="text-blue-400 hover:text-blue-600 transition">Fiona Githaiga</a>
+      <a href="https://github.com/FionaG26/habit-tracker" class="footer-link">Fiona Githaiga</a>
     </footer>
   </div>
 </template>
@@ -120,18 +119,19 @@ export default {
       if (document.querySelector(".header-title")) {
         gsap.from(".header-title", { opacity: 0, y: -20, duration: 1 });
       }
+      
       if (document.querySelector(".title")) {
         gsap.from(".title", { opacity: 0, y: -20, duration: 1 });
       }
-      if (document.querySelector(".toggle-text")) {
-        gsap.from(".toggle-text", { opacity: 0, y: 20, duration: 1 });
+
+      if (document.querySelector(".footer")) {
+        gsap.from(".footer", { opacity: 0, y: 20, duration: 1 });
       }
     });
 
     return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
   }
 };
-
 </script>
 
 <style scoped>
@@ -334,6 +334,18 @@ export default {
   height: 30px;
   animation: spin 1s linear infinite;
   margin: 10px auto;
+}
+
+  .footer {
+  position: absolute;
+  bottom: 20px;
+  font-size: 14px;
+  color: gray;
+}
+
+.footer-link {
+  color: #4A90E2;
+  text-decoration: none;
 }
 
 @keyframes spin {
