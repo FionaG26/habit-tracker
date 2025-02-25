@@ -218,5 +218,126 @@ export default {
   margin-bottom: 20px;
 }
 
-/* Keeping other styles unchanged */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #ff758c;
+  box-shadow: 0 0 8px rgba(255, 117, 140, 0.6);
+  outline: none;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.btn-custom {
+  background: #ff758c;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.btn-custom:hover {
+  background: #e83e8c;
+}
+
+.oauth-buttons {
+  margin-top: 20px;
+}
+
+.btn-google {
+  background: #db4437;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+  transition: background 0.3s;
+}
+
+.btn-google:hover {
+  background: #c1351d;
+}
+
+.btn-github {
+  background: #24292e;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+.btn-github:hover {
+  background: #1b1f23;
+}
+
+.toggle-text {
+  margin-top: 15px;
+  color: blue;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.toggle-text:hover {
+  text-decoration: underline;
+}
+
+.theme-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.toggle-icon {
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #ff758c;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
