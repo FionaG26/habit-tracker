@@ -115,22 +115,28 @@ export default {
       localStorage.setItem('darkMode', darkMode.value);
     };
 
-    onMounted(async () => {
-      document.body.classList.toggle('dark-mode', darkMode.value);
-      
-      await nextTick(); // Ensures DOM elements are fully loaded before GSAP
-      
-      if (headerTitle.value) {
-        gsap.from(headerTitle.value, { opacity: 0, y: -20, duration: 1 });
-      }
-      if (footer.value) {
-        gsap.from(footer.value, { opacity: 0, y: 20, duration: 1 });
-      }
-    });
+   onMounted(async () => {
+  document.body.classList.toggle('dark-mode', darkMode.value);
+  
+  await nextTick(); // Ensure DOM elements exist
 
-    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme, headerTitle, footer };
+  animateElements();
+});
+
+// Watches for ref updates and re-runs GSAP if needed
+watch([headerTitle, footer], () => {
+  animateElements();
+});
+
+const animateElements = () => {
+  if (headerTitle.value && footer.value) {
+    gsap.from(headerTitle.value, { opacity: 0, y: -20, duration: 1 });
+    gsap.from(footer.value, { opacity: 0, y: 20, duration: 1 });
+  } else {
+    console.warn("GSAP target not found! Waiting for DOM updates...");
   }
 };
+
 </script>
 
 <style scoped>
