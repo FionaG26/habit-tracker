@@ -120,16 +120,17 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f7f7f7;
+  background: transparent; /* Removed background color */
   padding: 20px;
 }
 
 .auth-card {
-  background: white;
-  padding: 40px;
+  background: rgba(255, 255, 255, 0.9); /* Slight transparency for a modern look */
+  padding: 50px;
   border-radius: 15px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
-  width: 420px; /* Increased the size */
+  width: 550px; /* Made wider */
+  max-width: 90%;
   text-align: center;
   transition: transform 0.3s ease-in-out;
 }
