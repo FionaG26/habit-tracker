@@ -1,11 +1,5 @@
 <template>
   <div class="auth-container">
-    <!-- Theme Toggle (Moved Outside auth-card) -->
-    <label class="theme-toggle">
-      <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
-      <span class="toggle-icon">{{ darkMode ? '🌙' : '🌞' }}</span>
-    </label>
-
     <div class="auth-card">
       <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
       <h2 class="title">Habit Tracker 🎯</h2>
@@ -42,9 +36,19 @@
       <p class="toggle-text" @click="toggleAuthMode">
         {{ isLogin ? "Don't have an account? Register here!" : "Already have an account? Login here!" }}
       </p>
+      
+      <label class="theme-toggle">
+        <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
+        <span class="toggle-icon">{{ darkMode ? '🌙' : '🌞' }}</span>
+      </label>
     </div>
-
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
+
+    <!-- Footer --> 
+    <footer class="mt-6 text-center text-gray-300 text-sm">
+      Designed with ❤️ by 
+      <a href="https://github.com/FionaG26/habit-tracker" class="text-blue-400 hover:text-blue-600 transition">Fiona Githaiga</a>
+    </footer>
   </div>
 </template>
 
@@ -113,25 +117,21 @@ export default {
     onMounted(() => {
       document.body.classList.toggle('dark-mode', darkMode.value);
       
-      const header = document.querySelector(".header-title");
-      if (header) {
-        gsap.from(header, { opacity: 0, y: -20, duration: 1 });
+      if (document.querySelector(".header-title")) {
+        gsap.from(".header-title", { opacity: 0, y: -20, duration: 1 });
       }
-      
-      const title = document.querySelector(".title");
-      if (title) {
-        gsap.from(title, { opacity: 0, y: -20, duration: 1 });
+      if (document.querySelector(".title")) {
+        gsap.from(".title", { opacity: 0, y: -20, duration: 1 });
       }
-
-      const footer = document.querySelector(".toggle-text");
-      if (footer) {
-        gsap.from(footer, { opacity: 0, y: 20, duration: 1 });
+      if (document.querySelector(".toggle-text")) {
+        gsap.from(".toggle-text", { opacity: 0, y: 20, duration: 1 });
       }
     });
 
     return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
   }
 };
+
 </script>
 
 <style scoped>
