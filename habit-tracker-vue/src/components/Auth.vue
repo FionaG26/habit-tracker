@@ -87,7 +87,7 @@ export default {
 
         localStorage.setItem('token', response.data.access_token);
         setTimeout(() => {
-          alert(${isLogin.value ? '🎉 Logged in' : '🎊 Registered'} successfully!);
+          alert(`${isLogin.value ? '🎉 Logged in' : '🎊 Registered'} successfully!`);
           playConfetti();
           window.location.href = "/dashboard";
         }, 500);
@@ -99,7 +99,7 @@ export default {
     };
 
     const oauthLogin = (provider) => {
-      window.location.href = http://127.0.0.1:8000/auth/${provider}/login;
+      window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
     };
 
     const toggleTheme = () => {
