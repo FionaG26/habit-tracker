@@ -110,6 +110,13 @@ const playConfetti = () => {
   };
   animate();
 };
+// GSAP animations
+onMounted(() => {
+  if (header.value && footer.value) {
+    gsap.from(header.value, { opacity: 0, y: -20, duration: 1 });
+    gsap.from(footer.value, { opacity: 0, y: 20, duration: 1, delay: 0.5 });
+  }
+});
 </script>
 
 
@@ -140,6 +147,7 @@ const playConfetti = () => {
 .header-title {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
+  color: white;
 }
 .subtitle {
   font-size: 1rem;
@@ -237,6 +245,7 @@ btn-custom.loading {
 .footer {
   margin-top: 1rem;
   font-size: 0.8rem;
+  color: black
 }
 .footer-link {
   color: #5c67f2;
@@ -288,5 +297,13 @@ input:checked + .toggle-icon::before {
     padding: 1.5rem;
   }
 }
-
+/* Footer */
+.footer {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+}
+.footer-link {
+  color: #5c67f2;
+  text-decoration: none;
+}
 </style>
