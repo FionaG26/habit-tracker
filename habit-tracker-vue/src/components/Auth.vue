@@ -192,14 +192,6 @@ export default {
   transition: transform 0.3s ease-in-out;
 }
 
-.dark-mode {
-  background-color: #121212;
-  color: white;
-}
-
-.dark-mode .auth-card {
-  background: rgba(50, 50, 50, 0.95);
-}
 
 .dark-mode .toggle-icon {
   transform: rotate(180deg);
