@@ -1,7 +1,7 @@
 <template>
   <div :class="{'dark-mode': darkMode}" class="auth-container">
     <div class="auth-card">
-      <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
+      <h1 ref="headerTitle" class="header-title">Welcome to Habit Tracker 🎯</h1>
       <p class="subtitle">Track your progress & build better habits!</p>
 
       <form @submit.prevent="handleSubmit">
@@ -44,7 +44,7 @@
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer ref="footer" class="footer">
       Designed with ❤️ by 
       <a href="https://github.com/FionaG26/habit-tracker" class="footer-link">Fiona Githaiga</a>
     </footer>
@@ -53,7 +53,7 @@
 
 <script>
 import API from '../services/api';
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, nextTick } from 'vue';
 import confetti from 'canvas-confetti';
 import gsap from "gsap";
 
@@ -65,6 +65,8 @@ export default {
     const confettiCanvas = ref(null);
     const loading = ref(false);
     const darkMode = ref(localStorage.getItem('darkMode') === 'true');
+    const headerTitle = ref(null);
+    const footer = ref(null);
 
     const toggleAuthMode = () => {
       isLogin.value = !isLogin.value;
@@ -97,7 +99,7 @@ export default {
           window.location.href = "/dashboard";
         }, 500);
       } catch (error) {
-        alert(error.response.data.detail || 'Something went wrong!');
+        alert(error.response?.data?.detail || 'Something went wrong!');
       } finally {
         loading.value = false;
       }
@@ -113,22 +115,20 @@ export default {
       localStorage.setItem('darkMode', darkMode.value);
     };
 
-    onMounted(() => {
-  document.body.classList.toggle('dark-mode', darkMode.value);
+    onMounted(async () => {
+      document.body.classList.toggle('dark-mode', darkMode.value);
+      
+      await nextTick(); // Ensures DOM elements are fully loaded before GSAP
+      
+      if (headerTitle.value) {
+        gsap.from(headerTitle.value, { opacity: 0, y: -20, duration: 1 });
+      }
+      if (footer.value) {
+        gsap.from(footer.value, { opacity: 0, y: 20, duration: 1 });
+      }
+    });
 
-  const headerTitle = document.querySelector(".header-title");
-  if (headerTitle) {
-    gsap.from(headerTitle, { opacity: 0, y: -20, duration: 1 });
-  }
-
-  const footer = document.querySelector(".footer");
-  if (footer) {
-    gsap.from(footer, { opacity: 0, y: 20, duration: 1 });
-  }
-});
-
-
-    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
+    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme, headerTitle, footer };
   }
 };
 </script>
