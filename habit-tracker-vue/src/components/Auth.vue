@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'dark-mode': darkMode}" class="auth-container">
+  <div class="auth-container">
     <div class="auth-card">
       <h1 class="header-title">Welcome to Habit Tracker 🎯</h1>
       <h2 class="title">Habit Tracker 🎯</h2>
@@ -36,12 +36,8 @@
       <p class="toggle-text" @click="toggleAuthMode">
         {{ isLogin ? "Don't have an account? Register here!" : "Already have an account? Login here!" }}
       </p>
-      
-      <label class="theme-toggle">
-        <input type="checkbox" v-model="darkMode" @change="toggleTheme" />
-        <span class="toggle-icon">🌞 / 🌙</span>
-      </label>
     </div>
+
     <canvas ref="confettiCanvas" class="confetti-canvas"></canvas>
 
     <!-- Footer -->
@@ -54,7 +50,7 @@
 
 <script>
 import API from '../services/api';
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import confetti from 'canvas-confetti';
 import gsap from "gsap";
 
@@ -65,7 +61,6 @@ export default {
     const form = ref({ username: '', password: '' });
     const confettiCanvas = ref(null);
     const loading = ref(false);
-    const darkMode = ref(localStorage.getItem('darkMode') === 'true');
 
     const toggleAuthMode = () => {
       isLogin.value = !isLogin.value;
@@ -108,29 +103,13 @@ export default {
       window.location.href = `http://127.0.0.1:8000/auth/${provider}/login`;
     };
 
-    const toggleTheme = () => {
-      darkMode.value = !darkMode.value;
-      document.body.classList.toggle('dark-mode', darkMode.value);
-      localStorage.setItem('darkMode', darkMode.value);
-    };
-
     onMounted(() => {
-      document.body.classList.toggle('dark-mode', darkMode.value);
-      
-      if (document.querySelector(".header-title")) {
-        gsap.from(".header-title", { opacity: 0, y: -20, duration: 1 });
-      }
-      
-      if (document.querySelector(".title")) {
-        gsap.from(".title", { opacity: 0, y: -20, duration: 1 });
-      }
-
-      if (document.querySelector(".footer")) {
-        gsap.from(".footer", { opacity: 0, y: 20, duration: 1 });
-      }
+      gsap.from(".header-title", { opacity: 0, y: -20, duration: 1 });
+      gsap.from(".title", { opacity: 0, y: -20, duration: 1 });
+      gsap.from(".footer", { opacity: 0, y: 20, duration: 1 });
     });
 
-    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading, darkMode, toggleTheme };
+    return { isLogin, form, showPassword, toggleAuthMode, togglePasswordVisibility, handleSubmit, oauthLogin, playConfetti, confettiCanvas, loading };
   }
 };
 </script>
@@ -141,38 +120,149 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: var(--background-color, #ffffff);
+  min-height: 100vh;
+  background: #f7f7f7;
   padding: 20px;
 }
 
-.dark-mode {
-  --background-color: #121212;
-  color: white;
-}
-
 .auth-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
-  width: 420px;
+  width: 420px; /* Increased the size */
   text-align: center;
+  transition: transform 0.3s ease-in-out;
 }
 
-.footer {
+.auth-card:hover {
+  transform: scale(1.03);
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #ff758c;
+  box-shadow: 0 0 8px rgba(255, 117, 140, 0.6);
+  outline: none;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.toggle-password {
   position: absolute;
-  bottom: 20px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.btn-custom {
+  background: #ff758c;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.btn-custom:hover {
+  background: #e83e8c;
+}
+
+.oauth-buttons {
+  margin-top: 20px;
+}
+
+.btn-google, .btn-github {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn-google {
+  background: #db4437;
+  color: white;
+}
+
+.btn-google:hover {
+  background: #c1351d;
+}
+
+.btn-github {
+  background: #24292e;
+  color: white;
+}
+
+.btn-github:hover {
+  background: #1b1f23;
+}
+
+.toggle-text {
+  margin-top: 15px;
+  color: blue;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.toggle-text:hover {
+  text-decoration: underline;
+}
+
+/* Footer Styling */
+.footer {
+  margin-top: auto;
+  text-align: center;
   font-size: 14px;
-  color: gray;
+  color: #666;
+  padding: 20px;
+  width: 100%;
 }
 
 .footer-link {
-  color: #4A90E2;
+  color: blue;
   text-decoration: none;
+  font-weight: bold;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
 }
 </style>
