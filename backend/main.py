@@ -14,8 +14,10 @@ load_dotenv()
 # Initialize FastAPI app
 app = FastAPI(title="Habit Tracker API", version="1.0", redirect_slashes=False)
 
-# Include the authentication router
-app.include_router(auth_router, prefix="/auth")  # ✅ Add this line
+# Include routers
+app.include_router(auth_router, prefix="/auth")
+app.include_router(users_router, prefix="/users")
+app.include_router(habits_router, prefix="/habits")
 
 # Add SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"))
