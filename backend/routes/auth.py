@@ -24,7 +24,7 @@ router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Add SessionMiddleware for OAuth sessions
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"), session_cookie="oauth_session", https_only=False)
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"), session_cookie="oauth_session", same_site="lax"))
 
 # -----------------------------
 # Admin Authorization Dependency
