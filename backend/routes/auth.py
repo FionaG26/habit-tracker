@@ -14,7 +14,7 @@ import os
 load_dotenv()
 
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 # Initialize OAuth
 oauth = OAuth()
