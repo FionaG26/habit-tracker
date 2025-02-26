@@ -32,7 +32,7 @@ app.include_router(users_router, prefix="/users", tags=["Users"])
 app.include_router(habits_router, prefix="/habits", tags=["Habits"])
 
 # Add SessionMiddleware for OAuth sessions
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"), session_cookie="oauth_session", same_site="lax"))
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"), session_cookie="oauth_session", same_site="lax")
 
 # OAuth setup (for use in routes/auth.py)
 oauth = OAuth()
