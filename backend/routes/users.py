@@ -71,11 +71,3 @@ def delete_user(user_id: int, db: Session = Depends(get_db), current_user: User 
 @router.get("/admin-only", summary="Admin-only test route")
 def admin_route(admin: User = Depends(require_admin)):
     return {"message": "Welcome, Admin!"}
-
-@router.post("/logout", summary="Client-side logout", operation_id="logout")
-def logout():
-    """
-    Since JWTs are stateless, logout is handled client-side.
-    This endpoint simply returns a success message, instructing the client to remove tokens from local storage.
-    """
-    return {"message": "Logout successful. Please remove tokens from your client storage."}
