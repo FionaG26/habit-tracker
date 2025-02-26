@@ -47,3 +47,6 @@ class HabitResponse(HabitBase):
 
     class Config:
         from_attributes = True
+
+class MessageResponse(BaseModel):
+    message: str
