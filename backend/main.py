@@ -26,36 +26,18 @@ app = FastAPI(
     redirect_slashes=False
 )
 
+# Add SessionMiddleware for OAuth sessions
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"),
+    session_cookie="oauth_session",
+    same_site="lax"
+)
+
 # Include routers
 app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 app.include_router(users_router, prefix="/users", tags=["Users"])
 app.include_router(habits_router, prefix="/habits", tags=["Habits"])
-
-# Add SessionMiddleware for OAuth sessions
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"), session_cookie="oauth_session", same_site="lax")
-
-# OAuth setup (for use in routes/auth.py)
-oauth = OAuth()
-
-oauth.register(
-    name="github",
-    client_id=os.getenv("GITHUB_CLIENT_ID"),
-    client_secret=os.getenv("GITHUB_CLIENT_SECRET"),
-    authorize_url="https://github.com/login/oauth/authorize",
-    access_token_url="https://github.com/login/oauth/access_token",
-    userinfo_endpoint="https://api.github.com/user",
-    client_kwargs={"scope": "user:email"},
-)
-
-oauth.register(
-    name="google",
-    client_id=os.getenv("GOOGLE_CLIENT_ID"),
-    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    authorize_url="https://accounts.google.com/o/oauth2/auth",
-    access_token_url="https://oauth2.googleapis.com/token",
-    userinfo_endpoint="https://www.googleapis.com/oauth2/v2/userinfo",
-    client_kwargs={"scope": "openid email profile"},
-)
 
 # CORS Middleware (Allow frontend communication)
 app.add_middleware(
