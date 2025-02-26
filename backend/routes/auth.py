@@ -23,16 +23,12 @@ load_dotenv()
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Add SessionMiddleware for OAuth sessions
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"), session_cookie="oauth_session", same_site="lax")
+# NOTE: Do not add SessionMiddleware here since 'app' is defined in main.py.
 
 # -----------------------------
 # Admin Authorization Dependency
 # -----------------------------
 def require_admin(current_user: User = Depends(get_current_user)):
-    """
-    Dependency to ensure the current user has an admin role.
-    """
     if not hasattr(current_user, "role") or current_user.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
     return current_user
@@ -62,10 +58,16 @@ oauth.register(
 @router.get("/google/login", operation_id="google_login", summary="Google OAuth login")
 async def google_login(request: Request):
     redirect_uri = f"{os.getenv('BASE_URL')}/auth/google/callback"
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    state = os.urandom(16).hex()  # Generate unique state
+    request.session["oauth_state"] = state  # Store state in session
+    return await oauth.google.authorize_redirect(request, redirect_uri, state=state)
 
 @router.get("/google/callback", operation_id="google_callback", summary="Google OAuth callback")
 async def google_callback(request: Request):
+    stored_state = request.session.pop("oauth_state", None)
+    received_state = request.query_params.get("state")
+    if stored_state is None or stored_state != received_state:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="State mismatch! Possible CSRF attack.")
     token = await oauth.google.authorize_access_token(request)
     user_info = token.get("userinfo")
     if not user_info or "email" not in user_info:
@@ -77,10 +79,16 @@ async def google_callback(request: Request):
 @router.get("/github/login", operation_id="github_login", summary="GitHub OAuth login")
 async def github_login(request: Request):
     redirect_uri = f"{os.getenv('BASE_URL')}/auth/github/callback"
-    return await oauth.github.authorize_redirect(request, redirect_uri)
+    state = os.urandom(16).hex()
+    request.session["oauth_state"] = state
+    return await oauth.github.authorize_redirect(request, redirect_uri, state=state)
 
 @router.get("/github/callback", operation_id="github_callback", summary="GitHub OAuth callback")
 async def github_callback(request: Request):
+    stored_state = request.session.pop("oauth_state", None)
+    received_state = request.query_params.get("state")
+    if stored_state is None or stored_state != received_state:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="State mismatch! Possible CSRF attack.")
     token = await oauth.github.authorize_access_token(request)
     user_info = await oauth.github.get("https://api.github.com/user", token=token)
     user_info_json = user_info.json()
@@ -123,10 +131,6 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 
 @router.post("/logout", summary="Client-side logout", operation_id="logout")
 def logout():
-    """
-    Since JWTs are stateless, logout is handled client-side.
-    Return a success message and instruct the client to remove tokens from local storage.
-    """
     return {"message": "Logout successful. Please remove tokens from your client storage."}
 
 @router.post("/refresh", response_model=TokenResponse, summary="Refresh JWT token")
@@ -145,9 +149,6 @@ def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
 def get_me(current_user: User = Depends(get_current_user)):
     return UserResponse(username=current_user.username, role=current_user.role)
 
-# -----------------------------
-# Example Admin-Only Endpoint
-# -----------------------------
 @router.get("/admin-only", summary="Admin-only test route", operation_id="admin_only")
 def admin_only_route(admin: User = Depends(require_admin)):
     return {"message": "Welcome, Admin!"}
