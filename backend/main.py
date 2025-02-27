@@ -14,6 +14,9 @@ from routes.habits import router as habits_router
 # Load environment variables
 load_dotenv()
 
+# Ensure session persistence
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET_KEY", "supersecretkey"))
+
 # Initialize logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
