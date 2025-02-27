@@ -55,40 +55,51 @@ oauth.register(
     client_kwargs={"scope": "user:email"},
 )
 
+# ----- Google OAuth Endpoints -----
 @router.get("/google/login", operation_id="google_login", summary="Google OAuth login")
 async def google_login(request: Request):
     redirect_uri = f"{os.getenv('BASE_URL')}/auth/google/callback"
-    state = os.urandom(16).hex()  # Generate unique state
-    request.session["oauth_state"] = state  # Store state in session
-    return await oauth.google.authorize_redirect(request, redirect_uri, state=state)
+    state = os.urandom(16).hex()  # Generate a unique state
+    response = await oauth.google.authorize_redirect(request, redirect_uri, state=state)
+    # Store the state in a secure, HTTP-only cookie
+    response.set_cookie(key="oauth_state", value=state, httponly=True, secure=True, samesite="Lax")
+    return response
 
 @router.get("/google/callback", operation_id="google_callback", summary="Google OAuth callback")
 async def google_callback(request: Request):
-    stored_state = request.session.pop("oauth_state", None)
+    # Retrieve the state from the cookie
+    stored_state = request.cookies.get("oauth_state")
     received_state = request.query_params.get("state")
-    if stored_state is None or stored_state != received_state:
+    if not stored_state or stored_state != received_state:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="State mismatch! Possible CSRF attack.")
+    
     token = await oauth.google.authorize_access_token(request)
     user_info = token.get("userinfo")
     if not user_info or "email" not in user_info:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Google authentication failed")
+    
     access_token = create_access_token(data={"sub": user_info["email"]}, expires_delta=timedelta(minutes=60))
     refresh_token = create_refresh_token(data={"sub": user_info["email"]})
     return RedirectResponse(url=f"{os.getenv('FRONTEND_URL')}/oauth-success?token={access_token}&refresh={refresh_token}")
 
+# ----- GitHub OAuth Endpoints -----
 @router.get("/github/login", operation_id="github_login", summary="GitHub OAuth login")
 async def github_login(request: Request):
     redirect_uri = f"{os.getenv('BASE_URL')}/auth/github/callback"
     state = os.urandom(16).hex()
-    request.session["oauth_state"] = state
-    return await oauth.github.authorize_redirect(request, redirect_uri, state=state)
+    response = await oauth.github.authorize_redirect(request, redirect_uri, state=state)
+    # Store the state in a secure, HTTP-only cookie
+    response.set_cookie(key="oauth_state", value=state, httponly=True, secure=True, samesite="Lax")
+    return response
 
 @router.get("/github/callback", operation_id="github_callback", summary="GitHub OAuth callback")
 async def github_callback(request: Request):
-    stored_state = request.session.pop("oauth_state", None)
+    # Retrieve the state from the cookie
+    stored_state = request.cookies.get("oauth_state")
     received_state = request.query_params.get("state")
-    if stored_state is None or stored_state != received_state:
+    if not stored_state or stored_state != received_state:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="State mismatch! Possible CSRF attack.")
+    
     token = await oauth.github.authorize_access_token(request)
     user_info = await oauth.github.get("https://api.github.com/user", token=token)
     user_info_json = user_info.json()
@@ -99,6 +110,7 @@ async def github_callback(request: Request):
         email = next((e["email"] for e in emails if e.get("primary", False) and e.get("verified", False)), None)
     if not email:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="GitHub email not found")
+    
     access_token = create_access_token(data={"sub": email}, expires_delta=timedelta(minutes=60))
     refresh_token = create_refresh_token(data={"sub": email})
     return RedirectResponse(url=f"{os.getenv('FRONTEND_URL')}/oauth-success?token={access_token}&refresh={refresh_token}")
