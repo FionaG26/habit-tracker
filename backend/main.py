@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
@@ -33,7 +33,7 @@ app = FastAPI(
     redirect_slashes=False
 )
 
-# Add SessionMiddleware for OAuth sessions
+# Add SessionMiddleware (only once with the desired configuration)
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("SESSION_SECRET", "your_secure_session_secret"),
@@ -54,6 +54,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # Function to create JWT token
 def create_jwt_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
