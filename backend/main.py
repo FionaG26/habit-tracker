@@ -14,8 +14,14 @@ from routes.habits import router as habits_router
 # Load environment variables
 load_dotenv()
 
-# Ensure session persistence
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET_KEY", "supersecretkey"))
+# Get JWT Secret from .env
+JWT_SECRET = os.getenv("1d088b2ab8611b0132fd6627427ff041b416b5ba86a985345789ce2b7a830d45")
+
+# Ensure it's not missing
+if not JWT_SECRET:
+    raise ValueError("Missing JWT_SECRET! Set it in the environment variables.")
+
+JWT_ALGORITHM = "HS256"  
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -50,6 +56,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Function to create JWT token
+def create_jwt_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+# Function to verify JWT token
+def verify_jwt_token(token: str):
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload  # Token is valid
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 # Health check endpoint for production readiness
 @app.get("/health", tags=["Health"], summary="Health Check")
