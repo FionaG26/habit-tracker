@@ -23,7 +23,7 @@ load_dotenv()
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# NOTE: Do not add SessionMiddleware here since 'app' is defined in main.py.
+STATE_SECRET = os.getenv("STATE_SECRET")
 
 # -----------------------------
 # Admin Authorization Dependency
