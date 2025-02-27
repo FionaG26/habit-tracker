@@ -14,14 +14,13 @@ from routes.habits import router as habits_router
 # Load environment variables
 load_dotenv()
 
-# Get JWT Secret from .env
+# Ensure JWT Secret Key is Loaded
 JWT_SECRET = os.getenv("1d088b2ab8611b0132fd6627427ff041b416b5ba86a985345789ce2b7a830d45")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
-# Ensure it's not missing
 if not JWT_SECRET:
-    raise ValueError("Missing JWT_SECRET! Set it in the environment variables.")
-
-JWT_ALGORITHM = "HS256"  
+    raise ValueError("⚠️ JWT_SECRET is missing in the .env file!")
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
